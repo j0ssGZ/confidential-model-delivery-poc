@@ -1,0 +1,41 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# Local environment values (keep documented placeholders versionable)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local credentials and keys: store real values only in these locations
+/secrets/
+/keys/
+/.credentials/
+/.huggingface/
+/.kube/
+*.local.secret.yaml
+*.local.secret.yml
+
+# Downloaded, encrypted and decrypted model artifacts; local caches
+/artifacts/
+/models/
+/.cache/
+
+# Tool caches and local OS metadata
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+
+# Dependency resolution is part of the reproducible delivery
+!uv.lock
