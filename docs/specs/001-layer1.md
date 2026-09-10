@@ -20,9 +20,8 @@ uv 0.12.12, Docker y kind 0.33.0, con Kubernetes 1.36.4 en el clúster
 constituye una nueva validación del entorno.
 
 Esta fase de preparación solo modifica las exclusiones de Git y documenta
-el contrato de Layer 1. No implementa el pipeline, instala dependencias,
-selecciona el modelo ni fija los detalles criptográficos. Tampoco publica
-artefactos del modelo.
+el contrato de Layer 1. No implementa el pipeline, no instala dependencias ni
+fija los detalles criptográficos. Tampoco publica artefactos del modelo.
 
 La futura implementación incluye producer, consumer, ejecución en Kubernetes,
 instrucciones reproducibles y comprobaciones del recorrido correcto y sus
@@ -33,9 +32,10 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
 
 ## Criterios de aceptación
 
-1. El producer descarga un modelo pequeño desde una fuente y revisión
-   identificables. Se registra qué archivos son necesarios para cargarlo,
-   incluidos configuración y archivos auxiliares cuando correspondan.
+1. El producer descarga `sentence-transformers/all-MiniLM-L6-v2` en la revisión
+   fija `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, con preferencia por los
+   pesos `model.safetensors`. Se registra qué archivos son necesarios para
+   cargarlo, incluidos configuración y archivos auxiliares cuando correspondan.
 2. El producer cifra esos archivos y publica en el repositorio de destino de
    Hugging Face el artefacto cifrado y únicamente los metadatos no sensibles
    acordados. No publica claves, tokens ni archivos del modelo en claro.
@@ -43,13 +43,13 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
    publicado y lee la clave desde un volumen de Secret montado como solo
    lectura. La clave no se incorpora a la imagen ni a manifiestos versionados.
 4. Con la clave correcta y el artefacto íntegro, el consumer recupera los
-   archivos y carga el modelo exclusivamente desde el directorio descifrado.
-   La carga no puede descargar el modelo original, resolver archivos faltantes
-   por red ni aprovechar una copia previa en caché. La comprobación parte de
-   una caché vacía y se realiza con la carga en modo local/sin red.
-5. La ejecución aporta evidencia verificable de que el modelo se ha cargado;
-   descargar o descifrar archivos no basta. La comprobación concreta de carga
-   o inferencia mínima se definirá al elegir el modelo.
+   archivos y carga el modelo con `sentence-transformers` exclusivamente desde
+   el directorio descifrado. La carga no puede descargar el modelo original,
+   resolver archivos faltantes por red ni aprovechar una copia previa en caché;
+   debe ejecutarse sin red y sin `trust_remote_code`.
+5. La ejecución genera un embedding para un texto fijo y comprueba que su shape
+   es `(1, 384)` y que todos sus valores son finitos. Descargar o descifrar
+   archivos no basta como evidencia de carga funcional.
 6. Una clave incorrecta provoca un fallo explícito, salida distinta de cero y
    ausencia de carga del modelo. No se continúa con archivos parcialmente
    descifrados ni se recurre al modelo original.
@@ -84,10 +84,27 @@ Estas reglas son convenciones de ubicación, no detección automática de secret
 Antes de versionar habrá que revisar el contenido; `.gitignore` no protege
 archivos ya seguidos por Git ni credenciales guardadas fuera de estas rutas.
 
+## Decisiones cerradas
+
+### Selección del modelo
+
+- **Modelo:** `sentence-transformers/all-MiniLM-L6-v2`.
+- **Revisión:** `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`.
+- **Licencia:** Apache-2.0.
+- **Arquitectura:** BERT encoder.
+- **Parámetros:** aproximadamente 22,7 millones.
+- **Formato de pesos preferido:** `model.safetensors`.
+- **Librería de carga:** `sentence-transformers`.
+- **Verificación funcional:** generar un embedding para un texto fijo,
+  comprobar shape `(1, 384)` y que todos sus valores sean finitos.
+- **Restricción del consumer:** cargar únicamente desde el directorio
+  descifrado, sin red, sin caché previa y sin `trust_remote_code`.
+
+La justificación y las alternativas descartadas quedan registradas en
+[`docs/decisions/001-model-selection.md`](../decisions/001-model-selection.md).
+
 ## Decisiones pendientes
 
-- Modelo, licencia, tamaño, revisión exacta, librería de carga y comprobación
-  mínima que evidencie su funcionamiento en ARM64.
 - Esquema de cifrado con autenticidad/integridad, librería, parámetros, formato
   del artefacto y tratamiento de nonces y metadatos. Los casos negativos son
   requisitos del resultado, no una elección anticipada de algoritmo.
