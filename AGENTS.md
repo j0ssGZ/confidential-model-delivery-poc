@@ -40,6 +40,12 @@ sincronizado con ambos. Si una decisión, requisito o comportamiento cambia,
 actualiza primero la documentación correspondiente y deja constancia de la
 verificación.
 
+Los commits deben ser pequeños, atómicos y describir una única intención. Cada
+cambio debe incluir una validación proporcional al riesgo y guardar evidencia
+cuando forme parte de los criterios de aceptación. La documentación y la
+implementación no deben atribuir a la PoC garantías de seguridad que realmente
+no proporciona.
+
 Para Layer 1, la spec vigente es
 [`docs/specs/001-layer1.md`](docs/specs/001-layer1.md). Sus decisiones
 pendientes bloquean la implementación del pipeline hasta ser resueltas.
