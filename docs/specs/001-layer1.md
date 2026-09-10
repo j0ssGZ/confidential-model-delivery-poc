@@ -19,9 +19,9 @@ uv 0.12.12, Docker y kind 0.33.0, con Kubernetes 1.36.4 en el clúster
 `secure-ai`, contexto `kind-secure-ai` y nodo Ready. Esta especificación no
 constituye una nueva validación del entorno.
 
-Esta fase de preparación solo modifica las exclusiones de Git y documenta
-el contrato de Layer 1. No implementa el pipeline, no instala dependencias ni
-fija los detalles criptográficos. Tampoco publica artefactos del modelo.
+Esta fase de preparación documenta el contrato y las decisiones cerradas de
+Layer 1. No implementa el pipeline, no instala dependencias ni publica
+artefactos del modelo.
 
 La futura implementación incluye producer, consumer, ejecución en Kubernetes,
 instrucciones reproducibles y comprobaciones del recorrido correcto y sus
@@ -36,9 +36,10 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
    fija `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, con preferencia por los
    pesos `model.safetensors`. Se registra qué archivos son necesarios para
    cargarlo, incluidos configuración y archivos auxiliares cuando correspondan.
-2. El producer cifra esos archivos y publica en el repositorio de destino de
-   Hugging Face el artefacto cifrado y únicamente los metadatos no sensibles
-   acordados. No publica claves, tokens ni archivos del modelo en claro.
+2. El producer empaqueta los archivos en un TAR determinista sin compresión y
+   cifra el resultado con AES-256-GCM. Publica el bundle autocontenido
+   `minilm-l6-v2.bundle.enc` y únicamente metadatos no sensibles acordados.
+   No publica claves, tokens ni archivos del modelo en claro.
 3. El consumer se ejecuta en el clúster previsto, descarga el artefacto
    publicado y lee la clave desde un volumen de Secret montado como solo
    lectura. La clave no se incorpora a la imagen ni a manifiestos versionados.
@@ -53,10 +54,11 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
 6. Una clave incorrecta provoca un fallo explícito, salida distinta de cero y
    ausencia de carga del modelo. No se continúa con archivos parcialmente
    descifrados ni se recurre al modelo original.
-7. Un ciphertext manipulado provoca un fallo de autenticidad/integridad,
-   salida distinta de cero y ausencia de carga. Se comprobará alterando bytes
-   del artefacto válido. La validación debe completarse antes de entregar
-   archivos al cargador; no basta con que este falle al interpretar los datos.
+7. Manipular la cabecera, metadata, nonce, modelo, revisión, hash, ciphertext
+   o tag provoca el rechazo del bundle, salida distinta de cero y ausencia de
+   carga. La validación de autenticidad/integridad debe completarse antes de
+   extraer o entregar archivos al cargador; no basta con que este falle al
+   interpretar los datos.
 8. Los errores no exponen claves, tokens ni contenido descifrado en los logs.
    Los archivos parciales de un intento fallido no quedan disponibles para
    una carga posterior; su retirada se documentará sin prometer borrado seguro.
@@ -103,17 +105,38 @@ archivos ya seguidos por Git ni credenciales guardadas fuera de estas rutas.
 La justificación y las alternativas descartadas quedan registradas en
 [`docs/decisions/001-model-selection.md`](../decisions/001-model-selection.md).
 
+### Cifrado y formato del bundle
+
+- **Cifrado:** AES-256-GCM de `cryptography`, con clave aleatoria de 32 bytes,
+  nonce aleatorio de 12 bytes y tag de autenticación de 16 bytes. Nunca se
+  reutiliza una combinación de clave y nonce.
+- **Empaquetado:** TAR determinista sin compresión, con archivos ordenados,
+  timestamps, UID y GID normalizados y rutas relativas. Se rechazan rutas
+  absolutas, path traversal, dispositivos y enlaces; se valida la extracción
+  antes de escribir archivos.
+- **Nombre previsto:** `minilm-l6-v2.bundle.enc`.
+- **Formato binario v1:** magic ASCII `CMDP1ENC` (8 bytes), longitud de metadata
+  como `uint32` big-endian, metadata JSON canónica UTF-8 y ciphertext seguido
+  del tag de AES-GCM.
+- **Metadata:** `schema_version`, `algorithm`, `source_model`,
+  `source_revision`, `payload_format`, `plaintext_sha256` y `nonce_b64`.
+  Se serializa con claves ordenadas, separadores compactos y sin timestamps ni
+  campos variables innecesarios.
+- **AAD:** magic, longitud codificada y bytes exactos de la metadata.
+- **Limitación aceptada:** AESGCM procesa el TAR completo en memoria. Es
+  aceptable para MiniLM y esta PoC; los modelos grandes requerirían cifrado
+  autenticado por bloques o streaming con nonces derivados de forma segura y
+  autenticación por bloque.
+
+La decisión completa, sus alternativas y consecuencias quedan registradas en
+[`docs/decisions/002-encryption-and-bundle-format.md`](../decisions/002-encryption-and-bundle-format.md).
+
 ## Decisiones pendientes
 
-- Esquema de cifrado con autenticidad/integridad, librería, parámetros, formato
-  del artefacto y tratamiento de nonces y metadatos. Los casos negativos son
-  requisitos del resultado, no una elección anticipada de algoritmo.
 - Generación, formato y suministro de la clave al producer y al Secret;
   nombre del Secret, ruta de montaje y ciclo de vida local de la clave.
 - Repositorio de Hugging Face de destino, visibilidad, autenticación y permisos
   mínimos; identificación de la versión exacta que consumirá Kubernetes.
-- Empaquetado de los archivos, metadatos públicos permitidos y cómo comprobar
-  que los archivos recuperados corresponden a los originales.
 - Forma de ejecución del consumer (por ejemplo, Job), imagen, recursos,
   almacenamiento temporal y limpieza del texto claro tras éxito o fallo.
 - Mecanismo para verificar la carga sin acceso a red y sin cachés previas,
