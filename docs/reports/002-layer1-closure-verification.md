@@ -83,8 +83,8 @@ las dos páginas de Notion tras las correcciones: checks y flujos actualizados,
 enlaces de AGENTS corregidos y subpágina de presentación conservada. Los bloques
 Mermaid se revisaron en el contenido recuperado; no se afirma una comprobación
 visual de su renderizado. `git diff --check` pasó antes del commit documental.
-El artículo de CoCo está resumido en la página principal. Falta contrastar el
-PDF original cuando Jose comparta el enlace.
+El artículo de CoCo está resumido en la página principal. Jose confirma que el
+enunciado ya está recogido en la spec y que no hace falta revisar el PDF aparte.
 
 Se conservaron los dos clústeres y los Jobs con sus logs, la clave original,
 la clave nueva en `secrets/`, descargas/bundles en rutas ignoradas y el checkout

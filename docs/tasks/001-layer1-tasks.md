@@ -160,7 +160,8 @@ de preparación que necesita su participación, no una tarea de implementación.
 Evidencia actual: [informe 002](../reports/002-layer1-closure-verification.md).
 Los resultados de 12 tests anteriores se conservan como historia. El cierre
 actual tiene 36 tests, tres Jobs en clúster nuevo y revisión acotada del historial.
-Pendiente adicional: contrastar el PDF original cuando Jose comparta su enlace.
+Jose confirma que el enunciado ya está recogido en la spec; no se requiere
+una revisión adicional del PDF.
 
 ## Orden y regla de finalización
 
