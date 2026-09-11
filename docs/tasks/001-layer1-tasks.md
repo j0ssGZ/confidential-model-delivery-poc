@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T04 completadas; T05 pendiente.
+- **Estado:** T01–T05 completadas; T06 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -68,12 +68,20 @@ de que exista un directorio recuperado.
 
 ## T05 · Imagen y manifiestos de Kubernetes
 
+**Estado:** completada.
+
 **Resultado:** Dockerfile de la imagen local, manifiesto de `Job`, montaje del
 Secret y `emptyDir`, recursos acordados y comandos locales no versionados para
 crear/actualizar el Secret.
 
 **Verificación:** inspección de imagen confirma ausencia de modelo, bundle,
 clave y token; validación de manifiestos; imagen cargable en kind.
+
+**Evidencia:** manifiestos validados con `kubectl apply --dry-run=client`; el
+script de Secret pasó `sh -n`. Se cambió PyTorch al índice oficial CPU, retirando
+las dependencias CUDA/NVIDIA del lock. Imagen local `cmdp-consumer:0.1.0`:
+`sha256:9d95116793291f48f6c5398c390b79d79984952985d7af902685efa99c2ace36`,
+321.9 MB, cargada en el nodo Ready de kind. No se creó ningún Secret ni Job.
 
 ## T06 · Publicación inmutable en Hugging Face
 

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: model-bundle-source
+  namespace: secure-ai-poc
+data:
+  BUNDLE_REPOSITORY: j0ssGZ/confidential-model-delivery-artifacts
+  # T06 replaces this with the immutable Hugging Face commit before execution.
+  BUNDLE_REVISION: ""
