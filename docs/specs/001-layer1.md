@@ -1,6 +1,7 @@
 # Layer 1: entrega de un modelo cifrado
 
-Estado: especificación inicial; implementación pendiente.
+Estado: planificación y tareas preparadas; implementación pendiente de
+aprobación.
 
 Esta spec se gestiona bajo el ciclo Specification-Driven Development definido
 en [`AGENTS.md`](../../AGENTS.md). Mientras queden decisiones importantes en
@@ -208,3 +209,15 @@ mismo proceso después de descargar el bundle cifrado: se deshabilita la red de
 la librería de carga, se usa un directorio de caché vacío por ejecución y se
 prohíbe `trust_remote_code`. Las pruebas demostrarán que faltantes locales no
 se resuelven desde Internet.
+
+## Plan y tareas
+
+El diseño de ejecución y las comprobaciones previstas están en
+[`docs/plans/001-layer1-plan.md`](../plans/001-layer1-plan.md). La división
+concreta, orden y evidencia por tarea están en
+[`docs/tasks/001-layer1-tasks.md`](../tasks/001-layer1-tasks.md).
+
+La implementación permanece pendiente de aprobación explícita del plan y las
+tareas. Las tareas que creen recursos externos, como el repositorio de Hugging
+Face o el Secret de Kubernetes, se ejecutarán solo dentro de la fase de
+implementación aprobada y sin versionar secretos.
