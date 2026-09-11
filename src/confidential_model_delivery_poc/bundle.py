@@ -63,7 +63,7 @@ def _require_key(key: bytes) -> None:
 
 def _safe_name(name: str) -> PurePosixPath:
     path = PurePosixPath(name)
-    if not name or path.is_absolute() or "." in path.parts or ".." in path.parts:
+    if not name or path.is_absolute() or any(part in ("", ".", "..") for part in name.split("/")) or "\\" in name or "\x00" in name:
         raise UnsafeArchiveError("archive contains an unsafe path")
     return path
 
@@ -75,6 +75,8 @@ def create_deterministic_tar(source_directory: Path) -> bytes:
         raise BundleFormatError("bundle source must be an existing directory")
     files: list[Path] = []
     for path in source.rglob("*"):
+        if any(part in (".cache", ".git") for part in path.relative_to(source).parts):
+            continue
         if path.is_symlink():
             raise BundleFormatError("bundle source may not contain symbolic links")
         if path.is_file():
@@ -132,7 +134,7 @@ def _parse_metadata(raw: bytes) -> tuple[dict[str, object], bytes]:
         raise BundleFormatError("bundle metadata is not valid JSON") from error
     if not isinstance(metadata, dict) or set(metadata) != _FIELDS or canonical_metadata(metadata) != raw:
         raise BundleFormatError("bundle metadata fields or representation are invalid")
-    if metadata["schema_version"] != SCHEMA_VERSION or metadata["algorithm"] != ALGORITHM or metadata["payload_format"] != PAYLOAD_FORMAT:
+    if type(metadata["schema_version"]) is not int or metadata["schema_version"] != SCHEMA_VERSION or metadata["algorithm"] != ALGORITHM or metadata["payload_format"] != PAYLOAD_FORMAT:
         raise BundleFormatError("bundle metadata declares an unsupported format")
     if not isinstance(metadata["source_model"], str) or not metadata["source_model"] or not isinstance(metadata["source_revision"], str) or not metadata["source_revision"]:
         raise BundleFormatError("bundle metadata has an invalid model reference")
@@ -141,6 +143,8 @@ def _parse_metadata(raw: bytes) -> tuple[dict[str, object], bytes]:
         raise BundleFormatError("bundle metadata has an invalid plaintext hash")
     try:
         int(digest, 16)
+        if not isinstance(metadata["nonce_b64"], str):
+            raise ValueError("nonce must be text")
         nonce = base64.b64decode(metadata["nonce_b64"], validate=True)
     except (TypeError, ValueError) as error:
         raise BundleFormatError("bundle metadata has an invalid nonce or hash") from error
@@ -182,6 +186,9 @@ def _validated_members(tar_bytes: bytes) -> list[tarfile.TarInfo]:
         if not member.isfile() or member.name in names:
             raise UnsafeArchiveError("archive contains an unsafe entry")
         names.add(member.name)
+    for name in names:
+        if any(str(parent) in names for parent in PurePosixPath(name).parents):
+            raise UnsafeArchiveError("archive contains conflicting paths")
     return members
 
 

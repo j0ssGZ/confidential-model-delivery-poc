@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import os
 import tempfile
 from pathlib import Path
 
@@ -11,7 +10,7 @@ from huggingface_hub import snapshot_download
 from sentence_transformers import SentenceTransformer
 
 from confidential_model_delivery_poc.bundle import (
-    BundleFormatError,
+    BundleError, BundleFormatError,
     create_bundle_from_directory,
 )
 
@@ -61,20 +60,12 @@ def verify_local_model(model_directory: Path) -> None:
     if not model_directory.is_dir():
         raise BundleFormatError("downloaded model directory does not exist")
     with tempfile.TemporaryDirectory(prefix="cmdp-producer-cache-") as cache:
-        previous_offline = os.environ.get("HF_HUB_OFFLINE")
-        os.environ["HF_HUB_OFFLINE"] = "1"
-        try:
-            SentenceTransformer(
-                str(model_directory),
-                cache_folder=cache,
-                local_files_only=True,
-                trust_remote_code=False,
-            )
-        finally:
-            if previous_offline is None:
-                os.environ.pop("HF_HUB_OFFLINE", None)
-            else:
-                os.environ["HF_HUB_OFFLINE"] = previous_offline
+        SentenceTransformer(
+            str(model_directory),
+            cache_folder=cache,
+            local_files_only=True,
+            trust_remote_code=False,
+        )
 
 
 def produce(model_directory: Path, key_file: Path, output_file: Path) -> Path:
@@ -87,12 +78,10 @@ def produce(model_directory: Path, key_file: Path, output_file: Path) -> Path:
         source_revision=MODEL_REVISION,
     )
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    temporary = output_file.with_suffix(output_file.suffix + ".tmp")
-    try:
+    with tempfile.TemporaryDirectory(prefix="producer-", dir=output_file.parent) as directory:
+        temporary = Path(directory) / "bundle.tmp"
         temporary.write_bytes(bundle)
         temporary.replace(output_file)
-    finally:
-        temporary.unlink(missing_ok=True)
     return output_file
 
 
@@ -108,7 +97,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.download_model:
             download_model(args.model_dir)
         result = produce(args.model_dir, args.key_file, args.output)
-    except BundleFormatError as error:
+    except BundleError as error:
         parser.error(str(error))
+    except Exception:
+        parser.error("producer failed: check local inputs, model files and download access")
     print(f"bundle_created={result}")
     return 0
