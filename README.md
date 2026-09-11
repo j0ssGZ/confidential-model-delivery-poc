@@ -11,7 +11,8 @@ de aceptación, las amenazas y las decisiones quedan en
 [`docs/plans/001-layer1-plan.md`](docs/plans/001-layer1-plan.md) y el progreso
 de tareas en [`docs/tasks/001-layer1-tasks.md`](docs/tasks/001-layer1-tasks.md).
 T01 (fundación Python), T02 (bundle v1 y extracción segura) y T03 (producer
-local) están completas; T04 (consumer aislado) es el siguiente paso.
+local) y T04 (consumer aislado) están completas; T05 (imagen y manifiestos de
+Kubernetes) es el siguiente paso.
 
 Todavía no hay pipeline implementado ni artefactos publicados. `uv.lock` se
 mantiene bajo control de Git para reproducibilidad; los entornos, secretos,

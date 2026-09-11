@@ -1,6 +1,6 @@
 # Layer 1: entrega de un modelo cifrado
 
-Estado: implementación aprobada; T01–T03 completadas, T04 pendiente.
+Estado: implementación aprobada; T01–T04 completadas, T05 pendiente.
 
 Esta spec se gestiona bajo el ciclo Specification-Driven Development definido
 en [`AGENTS.md`](../../AGENTS.md). Mientras queden decisiones importantes en

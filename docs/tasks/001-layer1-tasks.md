@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T03 completadas; T04 pendiente.
+- **Estado:** T01–T04 completadas; T05 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -53,11 +53,18 @@ confirmados como ignorados por Git.
 
 ## T04 · Consumer aislado
 
+**Estado:** completada.
+
 **Resultado:** consumer que recibe URL/revisión del bundle y ruta de clave,
 descarga, valida, descifra, extrae y carga sólo desde el temporal recuperado.
 
 **Verificación:** carga offline, caché vacía y sin código remoto; embedding de
 texto fijo con shape `(1, 384)` y valores finitos; logs saneados.
+
+**Evidencia:** `uv run pytest` pasó con 12 pruebas. La ejecución real contra
+el bundle local informó `model_loaded=true embedding_shape=(1, 384)` y confirmó
+la retirada del directorio recuperado. El caso de clave incorrecta aborta antes
+de que exista un directorio recuperado.
 
 ## T05 · Imagen y manifiestos de Kubernetes
 
