@@ -1,13 +1,17 @@
 # Informe final de estudio · Layer 1
 
+Actualización: el cierre correctivo, 36 tests y reproducción en un clúster nuevo
+están en [verificación 002](002-layer1-closure-verification.md). Los 12 tests
+citados más abajo son el resultado histórico inicial.
+
 ## Qué construimos
 
 Un producer descarga `sentence-transformers/all-MiniLM-L6-v2` en una revisión
 fija, lo empaqueta en un TAR determinista y lo cifra con AES-256-GCM. Publicamos
 solo el bundle cifrado en Hugging Face. Un consumer corre como Job en
 Kubernetes, recibe la clave desde un Secret montado como archivo, descarga por
-commit inmutable, descifra, extrae de forma segura y carga MiniLM sin red ni
-caché previa.
+commit inmutable, descifra, extrae de forma segura y carga MiniLM con opciones
+locales y una caché temporal nueva. El Pod conserva acceso a la red.
 
 ## Por qué esas decisiones
 
@@ -30,7 +34,8 @@ caché previa.
 
 ## Qué protege y qué no
 
-Protege el modelo frente a quien vea el repositorio pero no tenga la clave.
+Protege los archivos de nuestro bundle frente a quien no tenga la clave.
+MiniLM sigue siendo público en su repositorio original.
 No protege frente a un administrador privilegiado de Kubernetes o del host,
 porque Layer 1 confía en Kubernetes para entregar el Secret. Confidential
 computing y attestation pertenecen a Layer 3.
@@ -40,7 +45,8 @@ computing y attestation pertenecen a Layer 3.
 “Fijo un modelo público y su revisión, lo empaqueto de forma reproducible y lo
 cifro con AES-256-GCM. Publico solo el ciphertext. El consumer en Kubernetes
 recibe la clave como Secret montado, verifica autenticidad antes de extraer,
-carga únicamente los archivos recuperados sin red y demuestra un embedding de
-384 dimensiones. También pruebo clave incorrecta y manipulación del bundle.
+carga únicamente los archivos recuperados con opciones locales y demuestra
+un embedding de 384 dimensiones. También pruebo clave incorrecta y manipulación del bundle.
 La limitación es que Kubernetes y el host siguen dentro de mi frontera de
-confianza; para eliminarla necesitaría attestation y una TEE real.”
+confianza; una protección frente al host requeriría una TEE real, attestation
+y una política de confianza adecuada.”

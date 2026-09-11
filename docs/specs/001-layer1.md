@@ -1,7 +1,7 @@
 # Layer 1: entrega de un modelo cifrado
 
-Estado: recorrido funcional demostrado; cierre documental y verificación
-reforzada en curso (T09 reabierta y T10–T12).
+Estado: Layer 1 implementada y verificada; cierre correctivo T09–T12 documentado
+en [informe 002](../reports/002-layer1-closure-verification.md).
 
 Esta spec se gestiona bajo el ciclo Specification-Driven Development definido
 en [`AGENTS.md`](../../AGENTS.md). Mientras queden decisiones importantes en
@@ -99,7 +99,7 @@ archivos ya seguidos por Git ni credenciales guardadas fuera de estas rutas.
 - **Verificación funcional:** generar un embedding para un texto fijo,
   comprobar shape `(1, 384)` y que todos sus valores sean finitos.
 - **Restricción del consumer:** cargar únicamente desde el directorio
-  descifrado, sin red, sin caché previa y sin `trust_remote_code`.
+  descifrado con opciones de carga local, caché nueva y sin `trust_remote_code`.
 
 La justificación y las alternativas descartadas quedan registradas en
 [`docs/decisions/001-model-selection.md`](../decisions/001-model-selection.md).

@@ -15,8 +15,6 @@
 - `README.md`, las specs y el comportamiento real deben permanecer
   sincronizados.
 
-## Forma de trabajo
-
 ## Requisito permanente de cierre y sincronización
 
 Se aplica a todas las tareas del proyecto, en todas las sesiones. Antes de

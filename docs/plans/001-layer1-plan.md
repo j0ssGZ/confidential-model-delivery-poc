@@ -1,6 +1,6 @@
 # Plan 001: Layer 1
 
-- **Estado:** ejecutado T01–T08; cierre correctivo autorizado en curso.
+- **Estado:** ejecutado; cierre correctivo verificado en informe 002.
 - **Fuente de alcance:** [`001-layer1.md`](../specs/001-layer1.md).
 - **Objetivo:** entregar y demostrar el recorrido reproducible de un bundle
   cifrado desde Hugging Face hasta un Job de Kubernetes que recupera MiniLM y
@@ -71,8 +71,8 @@ No incluye capas opcionales ni una nueva publicación innecesaria del bundle.
   medición antes de ajustarlos.
 - **Falta de token o permisos de Hugging Face:** detener antes de publicar; no
   crear sustitutos con credenciales más amplias ni dejar tokens en archivos.
-- **Conectividad del Job:** permitir sólo la descarga inicial del bundle y
-  comprobar que la carga no usa red ni caché.
+- **Conectividad del Job:** descargar el bundle y comprobar carga local sin
+  fallback ni caché previa. No hay aislamiento de egress del Pod.
 - **Artefactos locales persistentes:** usar rutas ignoradas y `emptyDir`; la
   limpieza es lógica y se documenta sin alegar borrado seguro.
 

@@ -49,6 +49,6 @@ fallar en vez de obtenerlo desde Hugging Face u otra ubicación.
 
 ## Consecuencias
 
-La selección del modelo deja de bloquear la implementación. Las demás
-decisiones abiertas en la spec de Layer 1 continúan pendientes y mantienen
-bloqueada la fase de implementación.
+Decisión implementada. Las decisiones 002–005 también están cerradas.
+La identidad declarada se compara después de autenticar; la procedencia del
+directorio local del Producer sigue siendo responsabilidad del operador.

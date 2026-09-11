@@ -5,7 +5,7 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 1 tiene evidencia funcional; cierre correctivo T09–T12 en curso.
+Layer 1 implementada y verificada, incluido el cierre correctivo T09–T12.
 La especificación, el alcance, los criterios
 de aceptación, las amenazas y las decisiones quedan en
 [`docs/specs/001-layer1.md`](docs/specs/001-layer1.md); el plan está en
@@ -15,7 +15,10 @@ T01 (fundación Python), T02 (bundle v1 y extracción segura) y T03 (producer
 local), T04 (consumer aislado) y T05 (imagen y manifiestos de Kubernetes) están
 completas; T06 (publicación inmutable en Hugging Face) también está completa y
 T07 (recorrido positivo en kind) y T08 (recorridos negativos integrados) tienen
-evidencia histórica. T09 se reabrió para completar reproducción. El informe está en
+evidencia histórica. T09 se reabrió y completó con reproducción en un clúster
+nuevo y 36 tests. La evidencia actual está en
+[`verificación 002`](docs/reports/002-layer1-closure-verification.md).
+El informe de estudio está en
 [`docs/reports/001-layer1-final-report.md`](docs/reports/001-layer1-final-report.md).
 
 El bundle cifrado está publicado y funcionó en Kubernetes. `uv.lock` se
