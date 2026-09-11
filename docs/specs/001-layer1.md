@@ -154,10 +154,29 @@ a un administrador privilegiado del clúster o del host.
 La justificación, alternativas y consecuencias quedan registradas en
 [`docs/decisions/003-key-lifecycle-and-secret-delivery.md`](../decisions/003-key-lifecycle-and-secret-delivery.md).
 
+### Publicación en Hugging Face
+
+- **Repositorio:** `j0ssGZ/confidential-model-delivery-artifacts`.
+- **Visibilidad:** público y dedicado únicamente a artefactos cifrados de la
+  PoC. La confidencialidad del modelo depende de AES-256-GCM y de la clave, no
+  de ocultar el repositorio.
+- **Contenido permitido:** el bundle `minilm-l6-v2.bundle.enc` y metadatos no
+  sensibles necesarios para identificarlo. Quedan prohibidos claves, tokens,
+  modelos en claro y datos descifrados.
+- **Autenticación:** el producer usará un token local de Hugging Face con el
+  alcance mínimo de escritura necesario para ese repositorio. No se guardará
+  en Git, imágenes ni manifiestos versionados.
+- **Referencia del consumer:** tras publicar, se registrará el commit exacto
+  del repositorio y el consumer descargará esa revisión inmutable; no usará
+  `main` ni etiquetas mutables como `latest`.
+
+La creación del repositorio y la publicación se harán durante la
+implementación aprobada, una vez cerradas todas las decisiones bloqueantes.
+La justificación, alternativas y consecuencias quedan registradas en
+[`docs/decisions/004-hugging-face-publication.md`](../decisions/004-hugging-face-publication.md).
+
 ## Decisiones pendientes
 
-- Repositorio de Hugging Face de destino, visibilidad, autenticación y permisos
-  mínimos; identificación de la versión exacta que consumirá Kubernetes.
 - Forma de ejecución del consumer (por ejemplo, Job), imagen, recursos,
   almacenamiento temporal y limpieza del texto claro tras éxito o fallo.
 - Mecanismo para verificar la carga sin acceso a red y sin cachés previas,
