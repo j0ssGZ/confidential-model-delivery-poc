@@ -131,10 +131,31 @@ La justificación y las alternativas descartadas quedan registradas en
 La decisión completa, sus alternativas y consecuencias quedan registradas en
 [`docs/decisions/002-encryption-and-bundle-format.md`](../decisions/002-encryption-and-bundle-format.md).
 
+### Ciclo de vida y entrega de la clave
+
+- **Generación:** el producer genera una clave cruda aleatoria de 32 bytes y
+  la conserva localmente en `secrets/model-key.bin`, con permisos `0600`.
+- **Control de versiones:** esa ruta está ignorada por Git. La clave no se
+  incorpora a imágenes, manifiestos versionados, variables de entorno ni logs.
+- **Separación de responsabilidades:** el producer recibe la ruta de la clave
+  como parámetro y no necesita acceso a la API de Kubernetes.
+- **Secret:** una operación local de despliegue crea o actualiza el Secret
+  `model-decryption-key` en el namespace `secure-ai-poc`, con una entrada
+  llamada `key`.
+- **Montaje:** el consumer recibe el Secret como un archivo de solo lectura en
+  `/var/run/secrets/model-delivery/key` y lee de él los 32 bytes de clave.
+- **Rotación:** rotar la clave exige cifrar y publicar de nuevo el bundle y
+  actualizar el Secret; una clave nueva no descifra un bundle anterior.
+
+Kubernetes forma parte explícita de la frontera de confianza de Layer 1:
+entrega la clave al workload, pero esta decisión no pretende protegerla frente
+a un administrador privilegiado del clúster o del host.
+
+La justificación, alternativas y consecuencias quedan registradas en
+[`docs/decisions/003-key-lifecycle-and-secret-delivery.md`](../decisions/003-key-lifecycle-and-secret-delivery.md).
+
 ## Decisiones pendientes
 
-- Generación, formato y suministro de la clave al producer y al Secret;
-  nombre del Secret, ruta de montaje y ciclo de vida local de la clave.
 - Repositorio de Hugging Face de destino, visibilidad, autenticación y permisos
   mínimos; identificación de la versión exacta que consumirá Kubernetes.
 - Forma de ejecución del consumer (por ejemplo, Job), imagen, recursos,
