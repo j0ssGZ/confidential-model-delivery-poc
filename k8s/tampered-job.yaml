@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: model-consumer-tampered
+  namespace: secure-ai-poc
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 10001
+      containers:
+        - name: tampered-consumer
+          image: cmdp-consumer:0.1.0
+          imagePullPolicy: Never
+          command: ["/bin/sh", "-c"]
+          args:
+            - >-
+              python -c "from huggingface_hub import hf_hub_download; p=hf_hub_download('$(BUNDLE_REPOSITORY)','minilm-l6-v2.bundle.enc',revision='$(BUNDLE_REVISION)',local_dir='/work/download'); b=bytearray(open(p,'rb').read()); b[-1]^=1; open(p,'wb').write(b)" &&
+              cmdp-consumer --bundle /work/download/minilm-l6-v2.bundle.enc --key-file /var/run/secrets/model-delivery/key --work-dir /work
+          envFrom:
+            - configMapRef:
+                name: model-bundle-source
+          env:
+            - name: HF_HOME
+              value: /work/hf
+            - name: TMPDIR
+              value: /work
+          volumeMounts:
+            - name: model-key
+              mountPath: /var/run/secrets/model-delivery
+              readOnly: true
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: model-key
+          secret:
+            secretName: model-decryption-key
+        - name: work
+          emptyDir:
+            sizeLimit: 1Gi

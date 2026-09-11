@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T07 completadas; T08 pendiente.
+- **Estado:** T01–T09 verificadas.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -118,12 +118,19 @@ con el Pod.
 
 ## T08 · Recorridos negativos integrados
 
+**Estado:** completada.
+
 **Resultado:** ejecuciones con clave incorrecta y bundle manipulado.
 
 **Verificación:** ambos fallan con salida distinta de cero antes de cargar;
 los logs no revelan secretos ni plaintext y el temporal se limpia lógicamente.
 
+**Evidencia:** clave incorrecta y un byte alterado dentro de un Job separado
+fallaron con `bundle authentication failed` antes de cargar el modelo.
+
 ## T09 · Documentación y cierre de evidencia
+
+**Estado:** completada.
 
 **Resultado:** README y spec reflejan comandos, entradas, resultados esperados,
 límites y evidencias de T01–T08.
@@ -131,6 +138,10 @@ límites y evidencias de T01–T08.
 **Verificación:** una repetición desde cero siguiendo README reproduce el caso
 positivo y los dos negativos; batería de pruebas completa y `git diff --check`
 sin errores.
+
+**Evidencia:** informe de estudio en
+[`docs/reports/001-layer1-final-report.md`](../reports/001-layer1-final-report.md),
+12 pruebas locales pasando y documentación sincronizada.
 
 ## Orden y regla de finalización
 

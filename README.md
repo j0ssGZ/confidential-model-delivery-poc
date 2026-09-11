@@ -13,8 +13,9 @@ de tareas en [`docs/tasks/001-layer1-tasks.md`](docs/tasks/001-layer1-tasks.md).
 T01 (fundación Python), T02 (bundle v1 y extracción segura) y T03 (producer
 local), T04 (consumer aislado) y T05 (imagen y manifiestos de Kubernetes) están
 completas; T06 (publicación inmutable en Hugging Face) también está completa y
-T07 (recorrido positivo en kind) también está completa. T08 (recorridos
-negativos integrados) es el siguiente paso.
+T07 (recorrido positivo en kind), T08 (recorridos negativos integrados) y T09
+(documentación y evidencia) están completas. El informe de estudio está en
+[`docs/reports/001-layer1-final-report.md`](docs/reports/001-layer1-final-report.md).
 
 El bundle cifrado está publicado; el recorrido integrado en Kubernetes sigue
 pendiente. `uv.lock` se
