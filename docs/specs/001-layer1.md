@@ -175,9 +175,36 @@ implementación aprobada, una vez cerradas todas las decisiones bloqueantes.
 La justificación, alternativas y consecuencias quedan registradas en
 [`docs/decisions/004-hugging-face-publication.md`](../decisions/004-hugging-face-publication.md).
 
+### Ejecución del consumer en Kubernetes
+
+- **Workload:** un `Job` de ejecución única. Demuestra el recorrido finito de
+  descarga, descifrado, carga y verificación funcional; no se necesita un
+  `Deployment` de servicio permanente.
+- **Imagen:** `cmdp-consumer:0.1.0`, construida localmente desde el repositorio
+  para la arquitectura del clúster y cargada directamente en kind. Contendrá
+  una base Linux/Python, dependencias fijadas y el código del consumer; no
+  contendrá el modelo, bundle cifrado, clave, token ni contenido descifrado.
+- **Repetición de fallos:** `restartPolicy: Never` y `backoffLimit: 0`, para
+  que cada fallo quede visible sin reutilizar estado ni encadenar reintentos.
+- **Volúmenes:** la clave se monta solo lectura conforme a la decisión 003; un
+  `emptyDir` efímero guarda el bundle descargado y los archivos de trabajo
+  descifrados durante la ejecución.
+- **Recursos iniciales:** solicitud de `1` CPU y `1Gi` de memoria; límites de
+  `2` CPU y `2Gi` de memoria. Se ajustarán únicamente si la evidencia de
+  ejecución lo justifica.
+- **Limpieza:** el consumer elimina lógicamente su directorio temporal en un
+  bloque de limpieza tras éxito o fallo. No se promete borrado seguro del
+  almacenamiento subyacente.
+- **Red:** se permite únicamente descargar el bundle cifrado público. Después,
+  la carga del modelo se fuerza sin red, sin caché y sin `trust_remote_code`.
+
+La justificación, alternativas y consecuencias quedan registradas en
+[`docs/decisions/005-consumer-kubernetes-execution.md`](../decisions/005-consumer-kubernetes-execution.md).
+
 ## Decisiones pendientes
 
-- Forma de ejecución del consumer (por ejemplo, Job), imagen, recursos,
-  almacenamiento temporal y limpieza del texto claro tras éxito o fallo.
-- Mecanismo para verificar la carga sin acceso a red y sin cachés previas,
-  distinguiéndola de la descarga inicial del artefacto cifrado.
+No hay decisiones importantes pendientes. La carga aislada se realizará en el
+mismo proceso después de descargar el bundle cifrado: se deshabilita la red de
+la librería de carga, se usa un directorio de caché vacío por ejecución y se
+prohíbe `trust_remote_code`. Las pruebas demostrarán que faltantes locales no
+se resuelven desde Internet.
