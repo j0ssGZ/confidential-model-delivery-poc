@@ -1,7 +1,8 @@
 # Plan 002: Layer 2
 
 Estado: D1–D4 de la [spec](../specs/002-layer2.md) aprobadas por Jose.
-Preparación documental completa; implementación pendiente.
+Preparación documental y módulo de claves/firma completos (L2-03, informe 003).
+Siguiente: integración Producer/Consumer; despliegue y cierre aún pendientes.
 
 1. Cerrar decisiones con Jose y actualizar spec/Notion.
 2. Añadir módulo de claves y firma, generación exclusiva y tests criptográficos.
