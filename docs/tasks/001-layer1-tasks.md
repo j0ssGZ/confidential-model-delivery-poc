@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01 y T02 completadas; T03 pendiente.
+- **Estado:** T01–T03 completadas; T04 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -36,11 +36,20 @@ desde un directorio de staging sólo tras validar todos los miembros del TAR.
 
 ## T03 · Producer local
 
+**Estado:** completada.
+
 **Resultado:** descarga de MiniLM en la revisión fijada, inventario de archivos
 necesarios, comprobación de carga previa y generación de bundle cifrado.
 
 **Verificación:** el producer no deja modelo ni clave en rutas versionadas y
 emite sólo bundle + metadata no sensible; el bundle se puede validar localmente.
+
+**Evidencia:** se descargaron los 13 archivos permitidos de la revisión fijada,
+la carga local offline de MiniLM terminó correctamente y se generó el bundle.
+Tamaños locales: modelo 87 MiB y bundle 87 MiB. SHA-256 del bundle local:
+`f88c4205b748c88380da9d6e85182370649f38e740811d8d6fa93df82b5fa76b`.
+La clave (`secrets/`), modelo (`models/`) y bundle (`artifacts/`) fueron
+confirmados como ignorados por Git.
 
 ## T04 · Consumer aislado
 
