@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01 completada; T02 pendiente.
+- **Estado:** T01 y T02 completadas; T03 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -20,12 +20,19 @@ entre otras dependencias directas, `cryptography 46.0.7`,
 
 ## T02 · Bundle v1 y extracción segura
 
+**Estado:** completada.
+
 **Resultado:** creación y lectura de `CMDP1ENC`, metadata canónica, AAD,
 AES-256-GCM y TAR determinista con validación previa a extracción.
 
 **Verificación:** round-trip exacto; rechazos de clave errónea, cabecera,
 metadata, nonce, hash, ciphertext y tag alterados; rechazo de rutas peligrosas;
 ningún archivo parcial queda disponible.
+
+**Evidencia:** `uv run pytest` pasó con nueve pruebas. Cubre el recorrido
+correcto, clave errónea, cabecera, modelo, revisión, hash, nonce, ciphertext y
+tag alterados, además de TAR con path traversal. La extracción se materializa
+desde un directorio de staging sólo tras validar todos los miembros del TAR.
 
 ## T03 · Producer local
 
