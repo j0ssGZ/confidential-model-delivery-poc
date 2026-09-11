@@ -7,8 +7,8 @@
 
 ## Cifrado
 
-El producer generará una clave aleatoria de 32 bytes y un nonce aleatorio de
-12 bytes para cada cifrado. Cifrará el TAR completo con AES-256-GCM mediante la
+El operador prepara una clave de 32 bytes. El producer genera un nonce de
+12 bytes por cifrado y cifra el TAR completo con AES-256-GCM mediante la
 librería `cryptography`. El tag de autenticación tendrá 16 bytes y será el que
 produzca AES-GCM.
 
@@ -33,7 +33,7 @@ El nombre previsto del artefacto es `minilm-l6-v2.bundle.enc`.
 
 El formato binario v1 es, en este orden:
 
-1. Magic ASCII de 8 bytes: `CMDP1ENC`.
+1. Magic ASCII de 7 bytes: `CMDP1ENC`.
 2. Longitud de la metadata: `uint32` big-endian.
 3. Metadata JSON canónica codificada en UTF-8.
 4. Ciphertext seguido por el tag de autenticación producido por AES-GCM.
@@ -78,12 +78,10 @@ o streaming, con nonces derivados de forma segura y autenticación por bloque.
   formato.
 - **ChaCha20-Poly1305:** es una alternativa AEAD válida, pero AES-GCM es más
   común en infraestructura empresarial y servicios de gestión de claves.
-- **tar.gz:** aporta poca ganancia sobre `safetensors` y añade tiempo y
-  variabilidad.
+- **tar.gz:** descartado por simplicidad; no se midió su ganancia.
 
 ## Consecuencias
 
-La decisión de cifrado, formato del artefacto y empaquetado deja de bloquear la
-implementación. Siguen abiertas la gestión de la clave, el destino y la
-autenticación de Hugging Face, y la ejecución en Kubernetes; por ello la
-implementación de Layer 1 continúa bloqueada.
+Implementada; decisiones 003–005 cerradas. El TAR es determinista para los
+mismos bytes de entrada; el bundle cambia con el nonce aleatorio. No existe
+un registro persistente de reutilizaciones o colisiones de nonce.

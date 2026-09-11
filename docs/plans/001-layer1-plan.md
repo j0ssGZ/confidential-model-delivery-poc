@@ -1,12 +1,17 @@
 # Plan 001: Layer 1
 
-- **Estado:** propuesto; pendiente de aprobación para implementar.
+- **Estado:** ejecutado T01–T08; cierre correctivo autorizado en curso.
 - **Fuente de alcance:** [`001-layer1.md`](../specs/001-layer1.md).
 - **Objetivo:** entregar y demostrar el recorrido reproducible de un bundle
   cifrado desde Hugging Face hasta un Job de Kubernetes que recupera MiniLM y
   genera un embedding válido.
 
 ## Principios de ejecución
+
+El cierre sigue este orden: corregir documentación y contrato (T09), corregir
+limpieza/validaciones y ampliar tests (T10), reproducir local y Kubernetes con
+imagen nueva (T11), revisar historial y sincronizar informe/Notion (T12).
+No incluye capas opcionales ni una nueva publicación innecesaria del bundle.
 
 - Mantener claves, tokens, modelos descargados, bundles y directorios
   descifrados fuera de Git y de las imágenes.

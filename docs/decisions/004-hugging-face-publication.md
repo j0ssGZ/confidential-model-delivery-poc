@@ -8,11 +8,12 @@
 
 ## Publicación y consumo
 
-El producer publicará `minilm-l6-v2.bundle.enc` y los metadatos no sensibles
+El operador publica `minilm-l6-v2.bundle.enc` y los metadatos no sensibles
 acordados. Nunca publicará claves, tokens, archivos de modelo en claro ni
 directorios descifrados.
 
-La publicación requerirá un token de Hugging Face local con el privilegio
+La publicación registrada usó sesión web. Una subida por CLI requiere un token
+de Hugging Face local con el privilegio
 mínimo de escritura para este repositorio. El token se mantendrá fuera de Git,
 de las imágenes y de los manifiestos versionados.
 
@@ -47,6 +48,6 @@ metadatos publicados, por lo que estos no deben contener información sensible.
 
 ## Consecuencias
 
-El destino, visibilidad y autenticación de Hugging Face dejan de bloquear
-Layer 1. Sigue abierta la decisión de ejecución del consumer en Kubernetes;
-la implementación continúa bloqueada hasta cerrarla.
+Implementada; commit `c6d037b94a2f9e1072198a9c8de94540ada55edc`.
+Producer crea el bundle local; no sube al Hub. MiniLM es público en origen:
+demostramos el mecanismo, no volvemos secreto el modelo abierto original.

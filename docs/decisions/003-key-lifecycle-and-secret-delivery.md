@@ -3,12 +3,12 @@
 - **Estado:** cerrada.
 - **Ámbito:** Layer 1.
 - **Decisión:** usar una clave cruda aleatoria de 32 bytes generada por el
-  producer, conservada localmente fuera de Git y entregada al consumer mediante
+  operador, conservada localmente fuera de Git y entregada al consumer mediante
   un Kubernetes Secret montado como archivo de solo lectura.
 
 ## Flujo acordado
 
-1. El producer genera criptográficamente una clave de 32 bytes y la guarda en
+1. El operador genera criptográficamente una clave de 32 bytes y la guarda en
    `secrets/model-key.bin` con permisos `0600`.
 2. El producer recibe esa ruta como parámetro. No accede a la API de
    Kubernetes y no escribe la clave en la imagen, el bundle, manifiestos
@@ -52,6 +52,5 @@ ese actor.
 
 ## Consecuencias
 
-La gestión de la clave deja de bloquear Layer 1. Siguen abiertas el destino y
-la autenticación de Hugging Face, además de la ejecución del consumer en
-Kubernetes; por ello la implementación continúa bloqueada.
+Implementada. La creación de clave debe ser exclusiva y con permisos 0600
+desde el principio. No sobrescribe claves; la copia local no se borra sola.

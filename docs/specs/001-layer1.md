@@ -1,6 +1,7 @@
 # Layer 1: entrega de un modelo cifrado
 
-Estado: Layer 1 completada; T01–T09 verificadas.
+Estado: recorrido funcional demostrado; cierre documental y verificación
+reforzada en curso (T09 reabierta y T10–T12).
 
 Esta spec se gestiona bajo el ciclo Specification-Driven Development definido
 en [`AGENTS.md`](../../AGENTS.md). Mientras queden decisiones importantes en
@@ -19,11 +20,8 @@ uv 0.12.12, Docker y kind 0.33.0, con Kubernetes 1.36.4 en el clúster
 `secure-ai`, contexto `kind-secure-ai` y nodo Ready. Esta especificación no
 constituye una nueva validación del entorno.
 
-Esta fase de preparación documenta el contrato y las decisiones cerradas de
-Layer 1. No implementa el pipeline, no instala dependencias ni publica
-artefactos del modelo.
-
-La futura implementación incluye producer, consumer, ejecución en Kubernetes,
+Esta especificación documenta el contrato vigente de Layer 1.
+La implementación incluye producer, consumer, ejecución en Kubernetes,
 instrucciones reproducibles y comprobaciones del recorrido correcto y sus
 fallos. Quedan fuera de Layer 1 la atestación, los entornos de ejecución
 confiables, un gestor externo de claves y el endurecimiento de producción.
@@ -37,7 +35,7 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
    pesos `model.safetensors`. Se registra qué archivos son necesarios para
    cargarlo, incluidos configuración y archivos auxiliares cuando correspondan.
 2. El producer empaqueta los archivos en un TAR determinista sin compresión y
-   cifra el resultado con AES-256-GCM. Publica el bundle autocontenido
+   cifra el resultado con AES-256-GCM. El operador publica el bundle autocontenido
    `minilm-l6-v2.bundle.enc` y únicamente metadatos no sensibles acordados.
    No publica claves, tokens ni archivos del modelo en claro.
 3. El consumer se ejecuta en el clúster previsto, descarga el artefacto
@@ -47,7 +45,8 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
    archivos y carga el modelo con `sentence-transformers` exclusivamente desde
    el directorio descifrado. La carga no puede descargar el modelo original,
    resolver archivos faltantes por red ni aprovechar una copia previa en caché;
-   debe ejecutarse sin red y sin `trust_remote_code`.
+   usa `local_files_only=True` y no permite `trust_remote_code`. Esto es una
+   restricción del cargador, no una NetworkPolicy que desconecte el Pod.
 5. La ejecución genera un embedding para un texto fijo y comprueba que su shape
    es `(1, 384)` y que todos sus valores son finitos. Descargar o descifrar
    archivos no basta como evidencia de carga funcional.
@@ -115,7 +114,7 @@ La justificación y las alternativas descartadas quedan registradas en
   absolutas, path traversal, dispositivos y enlaces; se valida la extracción
   antes de escribir archivos.
 - **Nombre previsto:** `minilm-l6-v2.bundle.enc`.
-- **Formato binario v1:** magic ASCII `CMDP1ENC` (8 bytes), longitud de metadata
+- **Formato binario v1:** magic ASCII `CMDP1ENC` (7 bytes), longitud de metadata
   como `uint32` big-endian, metadata JSON canónica UTF-8 y ciphertext seguido
   del tag de AES-GCM.
 - **Metadata:** `schema_version`, `algorithm`, `source_model`,
@@ -133,7 +132,7 @@ La decisión completa, sus alternativas y consecuencias quedan registradas en
 
 ### Ciclo de vida y entrega de la clave
 
-- **Generación:** el producer genera una clave cruda aleatoria de 32 bytes y
+- **Generación:** el operador genera una clave cruda aleatoria de 32 bytes y
   la conserva localmente en `secrets/model-key.bin`, con permisos `0600`.
 - **Control de versiones:** esa ruta está ignorada por Git. La clave no se
   incorpora a imágenes, manifiestos versionados, variables de entorno ni logs.
@@ -163,15 +162,15 @@ La justificación, alternativas y consecuencias quedan registradas en
 - **Contenido permitido:** el bundle `minilm-l6-v2.bundle.enc` y metadatos no
   sensibles necesarios para identificarlo. Quedan prohibidos claves, tokens,
   modelos en claro y datos descifrados.
-- **Autenticación:** el producer usará un token local de Hugging Face con el
+- **Autenticación:** el operador usa su sesión web o un token local con el
   alcance mínimo de escritura necesario para ese repositorio. No se guardará
   en Git, imágenes ni manifiestos versionados.
 - **Referencia del consumer:** tras publicar, se registrará el commit exacto
   del repositorio y el consumer descargará esa revisión inmutable; no usará
   `main` ni etiquetas mutables como `latest`.
 
-La creación del repositorio y la publicación se harán durante la
-implementación aprobada, una vez cerradas todas las decisiones bloqueantes.
+La publicación registrada se realizó manualmente. `producer.py` termina
+creando un bundle local y no implementa generación de clave ni subida al Hub.
 La justificación, alternativas y consecuencias quedan registradas en
 [`docs/decisions/004-hugging-face-publication.md`](../decisions/004-hugging-face-publication.md).
 
@@ -195,19 +194,46 @@ La justificación, alternativas y consecuencias quedan registradas en
 - **Limpieza:** el consumer elimina lógicamente su directorio temporal en un
   bloque de limpieza tras éxito o fallo. No se promete borrado seguro del
   almacenamiento subyacente.
-- **Red:** se permite únicamente descargar el bundle cifrado público. Después,
-  la carga del modelo se fuerza sin red, sin caché y sin `trust_remote_code`.
+- **Red:** el Pod tiene conectividad para descargar el bundle. El cargador
+  usa archivos locales y caché nueva, sin código remoto. No hay aislamiento
+  de egress del Pod. La prueba de faltantes debe observar cero conexiones.
 
 La justificación, alternativas y consecuencias quedan registradas en
 [`docs/decisions/005-consumer-kubernetes-execution.md`](../decisions/005-consumer-kubernetes-execution.md).
 
 ## Decisiones pendientes
 
-No hay decisiones importantes pendientes. La carga aislada se realizará en el
-mismo proceso después de descargar el bundle cifrado: se deshabilita la red de
-la librería de carga, se usa un directorio de caché vacío por ejecución y se
-prohíbe `trust_remote_code`. Las pruebas demostrarán que faltantes locales no
-se resuelven desde Internet.
+No hay decisiones importantes pendientes de Layer 1. El usuario autorizó
+corregir los hallazgos de la revisión y completar la entrega. Layer 2 y Layer 3
+no forman parte de este cierre.
+
+## Contrato del cierre autorizado
+
+- El Consumer crea un temporal exclusivo por ejecución y solo elimina ese
+  temporal: nunca borra un `recovered-model` preexistente del operador.
+- La revisión de descarga debe ser un SHA Git de 40 caracteres hexadecimales.
+  Después de autenticar, se exige el modelo y revisión MiniLM acordados antes
+  de extraer. Esto no certifica la procedencia de archivos locales suministrados
+  al Producer ni identifica exclusivamente a quien comparte la clave AES.
+- Se rechazan metadata malformada, rutas ambiguas, colisiones de rutas y
+  TAR inválidos antes de materializar archivos. Se excluyen `.cache` y `.git`
+  del empaquetado para no incluir metadata auxiliar local de descargas.
+- La carga local utiliza exclusivamente archivos recuperados y caché nueva;
+  se retiran asignaciones tardías de variables offline que no prueban nada.
+  Se prueba un modelo existente pero incompleto, observando conexiones.
+- Las CLI conservan mensajes de errores de dominio controlados; los errores
+  inesperados de librerías, descarga o archivos se convierten en mensajes
+  genéricos sin volcar excepciones que puedan contener credenciales.
+- La generación local de clave usa creación exclusiva y permisos 0600 desde
+  el principio. Las pruebas negativas no sustituyen la clave positiva.
+- La imagen base se fija por digest y los Jobs negativos conservan el perfil
+  de recursos y seguridad del positivo.
+
+Limitaciones mantenidas: MiniLM es público en origen; metadata visible;
+AESGCM y TAR completos en RAM; nonce aleatorio sin registro de colisiones;
+host y Kubernetes confiables; retirada lógica, no borrado seguro. El Secret,
+clave local y descarga pueden permanecer hasta su retirada explícita. La
+demostración funcional no es una auditoría criptográfica ni de producción.
 
 ## Plan y tareas
 
@@ -216,7 +242,5 @@ El diseño de ejecución y las comprobaciones previstas están en
 concreta, orden y evidencia por tarea están en
 [`docs/tasks/001-layer1-tasks.md`](../tasks/001-layer1-tasks.md).
 
-La implementación permanece pendiente de aprobación explícita del plan y las
-tareas. Las tareas que creen recursos externos, como el repositorio de Hugging
-Face o el Secret de Kubernetes, se ejecutarán solo dentro de la fase de
-implementación aprobada y sin versionar secretos.
+El plan y tareas de cierre están autorizados por el usuario. Las evidencias
+se registrarán distinguiendo pruebas actuales de resultados históricos.

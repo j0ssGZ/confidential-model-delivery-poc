@@ -44,7 +44,7 @@ limpieza tanto en éxito como en fallo; esto no equivale a una garantía de
 borrado seguro del almacenamiento subyacente.
 
 La red se usará para descargar el bundle cifrado público. Antes de cargar el
-modelo recuperado, el consumer deshabilitará la red de la librería, usará una
+modelo recuperado, el consumer usa `local_files_only=True` y una
 caché vacía por ejecución y prohibirá `trust_remote_code`. Las pruebas deberán
 demostrar que ningún archivo faltante se obtiene de Internet.
 
@@ -61,6 +61,6 @@ demostrar que ningún archivo faltante se obtiene de Internet.
 
 ## Consecuencias
 
-No quedan decisiones importantes pendientes para Layer 1. El siguiente paso
-del flujo SDD es crear un plan verificable y dividirlo en tareas antes de
-implementar.
+Implementada; verificaciones correctivas T10–T12 en curso. No hay bloqueo de
+egress del Pod. `emptyDir` no usa `medium: Memory`; persiste mientras exista
+el Pod. La retirada lógica no equivale a borrado seguro.

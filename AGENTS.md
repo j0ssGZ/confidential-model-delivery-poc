@@ -17,6 +17,39 @@
 
 ## Forma de trabajo
 
+## Requisito permanente de cierre y sincronización
+
+Se aplica a todas las tareas del proyecto, en todas las sesiones. Antes de
+declarar una tarea terminada, revisar y actualizar los documentos afectados:
+
+- Spec y decisiones: requisitos, alcance, comportamiento y límites reales.
+- Plan y tareas: estados y checks respaldados por evidencia concreta.
+- README: comandos reproducibles, entradas, resultados esperados y errores.
+- Informes: fecha, commit, pruebas ejecutadas y resultados, sin secretos.
+- Notion principal: https://app.notion.com/p/3d778dc87e9281f7b4dbfc7275d6a141
+- Notion defensa/flujo: https://app.notion.com/p/3d878dc87e9281f295faee6ae00005e3
+
+La spec gobierna el alcance; el código y las pruebas prueban el comportamiento.
+Si difieren, registrar la discrepancia y resolverla, nunca copiar garantías sin
+comprobarlas. Actualizar primero el contrato cuando cambie el comportamiento.
+No confundir implementado, probado localmente, integrado y reproducido desde
+cero. Mantener como históricos los resultados que no se hayan repetido.
+No marcar ensayos personales, auditorías completas o capas opcionales sin
+evidencia. No añadir frases humorísticas del chat a los entregables.
+
+Leer Notion antes de editar y volver a leer después de cambios estructurales;
+comprobar enlaces, subpáginas, checks y bloques Mermaid. Si Notion no está
+accesible, registrar el pendiente exacto y comunicarlo: la sincronización sigue
+abierta, no se omite silenciosamente ni impide avanzar con trabajo independiente.
+
+Cada cierre debe indicar qué se validó, qué documentos se sincronizaron y qué
+queda pendiente. Para documentos no afectados, basta justificar que no cambian;
+no crear cambios cosméticos ni repetir pruebas caras sin motivo. Hacer commits
+pequeños y publicarlos según la autorización vigente del usuario. Esta norma
+no autoriza cambios de alcance ni divulgación de secretos.
+
+## Ciclo SDD
+
 Este repositorio usa Specification-Driven Development durante todo el
 challenge. La documentación, el plan y la implementación deben evolucionar
 juntos; no se programa contra supuestos que todavía estén pendientes de

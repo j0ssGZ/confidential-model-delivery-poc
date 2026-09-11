@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T09 verificadas.
+- **Estado:** T01–T08 con evidencia histórica; T09 reabierta y T10–T12 en curso.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -130,7 +130,8 @@ fallaron con `bundle authentication failed` antes de cargar el modelo.
 
 ## T09 · Documentación y cierre de evidencia
 
-**Estado:** completada.
+**Estado:** reabierta. El cierre anterior no acreditaba reproducción desde cero;
+README carecía de comandos y conservaba estados contradictorios.
 
 **Resultado:** README y spec reflejan comandos, entradas, resultados esperados,
 límites y evidencias de T01–T08.
@@ -144,6 +145,19 @@ sin errores.
 12 pruebas locales pasando y documentación sincronizada.
 
 ## Orden y regla de finalización
+
+## Cierre correctivo autorizado el 11-09-2026
+
+- [ ] T09: README reproducible, spec y decisiones coherentes con el código.
+- [ ] T10: temporal exclusivo, revisión/identidad validadas, errores saneados,
+  formato robusto y pruebas de faltantes offline y limpieza.
+- [ ] T11: imagen base fijada, negativos aislados, repetición local y kind;
+  conservar resultados en un informe de verificación sin secretos.
+- [ ] T12: revisión del historial con alcance explícito, informe final y Notion
+  actualizados; commits pequeños publicados.
+
+El ensayo personal de Jose no se marca como hecho automáticamente. Es un paso
+de preparación que necesita su participación, no una tarea de implementación.
 
 T01 → T02 → T03 → T04 → T05 → T06 → T07 → T08 → T09. Cada tarea debe tener un
 commit atómico, una comprobación proporcional y evidencia enlazable antes de
