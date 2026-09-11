@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: model-consumer-wrong-key
+  namespace: secure-ai-poc
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: wrong-key-consumer
+          image: cmdp-consumer:0.1.0
+          imagePullPolicy: Never
+          command: ["/bin/sh", "-c"]
+          args:
+            - >-
+              python -c "import os; fd=os.open('/work/wrong-key',os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600); os.write(fd,os.urandom(32)); os.close(fd)" &&
+              cmdp-consumer --repo-id "$(BUNDLE_REPOSITORY)" --revision "$(BUNDLE_REVISION)" --key-file /work/wrong-key --work-dir /work
+          envFrom:
+            - configMapRef:
+                name: model-bundle-source
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: work
+              mountPath: /work
+      volumes:
+        - name: work
+          emptyDir:
+            sizeLimit: 1Gi
