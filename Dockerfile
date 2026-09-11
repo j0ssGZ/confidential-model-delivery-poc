@@ -2,7 +2,8 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    TMPDIR=/work/tmp \
+    TMPDIR=/work \
+    HF_HOME=/work/hf \
     PATH=/app/.venv/bin:$PATH
 
 WORKDIR /app

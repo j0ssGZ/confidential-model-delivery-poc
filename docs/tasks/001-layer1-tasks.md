@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T06 completadas; T07 pendiente.
+- **Estado:** T01–T07 completadas; T08 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -100,11 +100,21 @@ La referencia inmutable fijada para el consumer es
 
 ## T07 · Recorrido positivo en kind
 
+**Estado:** completada.
+
 **Resultado:** Job ejecutado en el contexto `kind-secure-ai` con Secret
 `model-decryption-key` en `secure-ai-poc` y bundle de la revisión inmutable.
 
 **Verificación:** Job completado; logs no sensibles muestran descarga,
 descifrado, carga y embedding válidos; no hay descarga del modelo original.
+
+**Evidencia:** Job `model-consumer` completado (`1/1`) en `kind-secure-ai`.
+Sus logs informan `model_loaded=true embedding_shape=(1, 384)`. La imagen se
+ajustó para que `TMPDIR` y `HF_HOME` residan en `/work`, el `emptyDir` efímero,
+manteniendo el root filesystem de solo lectura. Kubernetes no permite ejecutar
+una comprobación dentro de un Pod ya terminado; la limpieza lógica del modelo
+recuperado se realiza en el `finally` del consumer y el `emptyDir` desaparece
+con el Pod.
 
 ## T08 · Recorridos negativos integrados
 
