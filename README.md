@@ -89,6 +89,11 @@ La imagen solo contiene código/dependencias; el bundle se descarga al ejecutar.
 
 ## Dos negativos sin alterar la clave positiva
 
+Para verificar en un clúster vacío sin tocar el laboratorio, usar el nombre
+`secure-ai-repro` en `kind create` y `kind load`, sustituir el contexto por
+`kind-secure-ai-repro` en todos los comandos y pasar ese contexto como segundo
+argumento a `scripts/create_model_secret.sh`. Namespace y manifiestos son iguales.
+
 ```sh
 kubectl --context kind-secure-ai apply -f k8s/wrong-key-job.yaml -f k8s/tampered-job.yaml
 kubectl --context kind-secure-ai -n secure-ai-poc wait --for=condition=failed job/model-consumer-wrong-key --timeout=180s
@@ -130,3 +135,15 @@ logs dejarán de estar disponibles en Kubernetes: conservar evidencia antes.
 
 El ensayo personal de defensa requiere participación de Jose y no se da por
 terminado al pasar las pruebas automáticas.
+
+## Revisión acotada del historial
+
+```sh
+uv run python scripts/audit_history.py --key-file secrets/model-key.bin
+```
+
+Recorre blobs de todas las referencias Git locales y busca la clave conocida
+(bytes/hex/Base64), patrones de tokens HF/GitHub y cabeceras de claves privadas.
+Solo muestra conteos e identificadores de blobs; no imprime coincidencias.
+Cero hallazgos no prueba ausencia de todo secreto imaginable ni analiza
+reflogs, ramas remotas no descargadas o infraestructura de producción.
