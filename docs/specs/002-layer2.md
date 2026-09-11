@@ -1,7 +1,8 @@
 # Layer 2: firma del bundle cifrado
 
 Estado: D1–D4 aprobadas por Jose el 11-09-2026. Módulo criptográfico L2-03
-verificado; integración Producer/Consumer y Kubernetes pendiente.
+verificado; integración Producer/Consumer L2-04 verificada localmente.
+Kubernetes y publicación firmada pendientes.
 Justificación y alternativas: [decisión 006](../decisions/006-layer2-signing-trust.md).
 
 ## Alcance y base aprobada

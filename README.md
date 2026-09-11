@@ -7,8 +7,8 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 Layer 2 en preparación en la rama `layer2`: [spec aprobada](docs/specs/002-layer2.md),
 [plan](docs/plans/002-layer2-plan.md) y [tareas](docs/tasks/002-layer2-tasks.md).
-Sus decisiones D1–D4 están aprobadas; el módulo de firma está probado, pero su
-integración con Producer/Consumer y Kubernetes está pendiente.
+Sus decisiones D1–D4 están aprobadas; firma y Producer/Consumer firmado probados
+localmente. Publicación firmada y Kubernetes siguen pendientes.
 Justificación: [firma y confianza de la clave pública](docs/decisions/006-layer2-signing-trust.md).
 Los comandos de este README siguen
 siendo de Layer 1. La etiqueta `layer1-complete` conserva su entrega verificada
@@ -46,6 +46,33 @@ cd confidential-model-delivery-poc
 uv sync --locked
 uv run pytest -q
 ```
+
+## Layer 2: recorrido firmado local
+
+Disponible en la rama `layer2`. Generar una pareja NUEVA una sola vez:
+
+```sh
+uv run python -m confidential_model_delivery_poc.signing \
+  --private-key secrets/signing-private.pem --public-key keys/signing-public.pem
+uv run cmdp-producer --model-dir models/minilm-l6-v2 \
+  --key-file secrets/model-key.bin --signing-key-file secrets/signing-private.pem \
+  --output artifacts/signed-demo/minilm-l6-v2.bundle.enc
+uv run cmdp-consumer-signed --bundle artifacts/signed-demo/minilm-l6-v2.bundle.enc \
+  --signature artifacts/signed-demo/minilm-l6-v2.bundle.enc.sig \
+  --public-key keys/signing-public.pem --key-file secrets/model-key.bin \
+  --work-dir artifacts/signed-demo/check
+```
+
+Preparar antes el modelo y la clave AES siguiendo Layer 1. Si las claves de
+firma ya existen, omitir generación. Producer firmado exige rutas de salida
+nuevas y produce bundle más `.sig`; errores normales retiran salidas propias.
+Una interrupción puede dejar un par incompleto: revisar, no sobrescribir.
+Publicar SOLO bundle y firma en un commit nuevo; la privada permanece local.
+CLI firmada exige la firma y pública; no hay fallback sin firma. Para descarga
+se omiten `--bundle`/`--signature` y se pasan `--repo-id` y `--revision` completa.
+Salida correcta: `signature_verified=true model_loaded=true embedding_shape=(1, 384)`.
+Un fallo de firma ocurre antes de leer la AES o descifrar. Verificación y
+descifrado consumen la misma instantánea de bytes.
 
 ## Claves y Producer: crear un bundle nuevo
 

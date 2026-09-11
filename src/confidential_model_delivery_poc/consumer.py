@@ -38,10 +38,15 @@ def load_embedding(model_directory: Path) -> tuple[int, int]:
 
 def consume_bundle(bundle_path: Path, key_file: Path, work_directory: Path) -> tuple[int, int]:
     """Authenticate, extract and load a local bundle, cleaning plaintext on exit."""
+    return consume_bundle_bytes(bundle_path.read_bytes(), key_file, work_directory)
+
+
+def consume_bundle_bytes(bundle: bytes, key_file: Path, work_directory: Path) -> tuple[int, int]:
+    """Consume exactly the bytes supplied, without re-reading a bundle file."""
     work_directory.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="consumer-", dir=work_directory) as temporary:
         recovered = Path(temporary) / "recovered-model"
-        decrypted = decrypt_bundle(bundle_path.read_bytes(), read_key(key_file))
+        decrypted = decrypt_bundle(bundle, read_key(key_file))
         if (decrypted.metadata["source_model"], decrypted.metadata["source_revision"]) != (MODEL_ID, MODEL_REVISION):
             raise BundleFormatError("bundle model identity does not match the expected MiniLM revision")
         extract_verified_tar(decrypted.tar_bytes, recovered)
