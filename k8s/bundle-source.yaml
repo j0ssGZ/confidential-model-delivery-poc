@@ -5,5 +5,4 @@ metadata:
   namespace: secure-ai-poc
 data:
   BUNDLE_REPOSITORY: j0ssGZ/confidential-model-delivery-artifacts
-  # T06 replaces this with the immutable Hugging Face commit before execution.
-  BUNDLE_REVISION: ""
+  BUNDLE_REVISION: c6d037b94a2f9e1072198a9c8de94540ada55edc

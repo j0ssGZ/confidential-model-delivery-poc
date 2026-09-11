@@ -12,8 +12,10 @@ de aceptación, las amenazas y las decisiones quedan en
 de tareas en [`docs/tasks/001-layer1-tasks.md`](docs/tasks/001-layer1-tasks.md).
 T01 (fundación Python), T02 (bundle v1 y extracción segura) y T03 (producer
 local), T04 (consumer aislado) y T05 (imagen y manifiestos de Kubernetes) están
-completas; T06 (publicación inmutable en Hugging Face) es el siguiente paso.
+completas; T06 (publicación inmutable en Hugging Face) también está completa y
+T07 (recorrido positivo en kind) es el siguiente paso.
 
-Todavía no hay pipeline implementado ni artefactos publicados. `uv.lock` se
+El bundle cifrado está publicado; el recorrido integrado en Kubernetes sigue
+pendiente. `uv.lock` se
 mantiene bajo control de Git para reproducibilidad; los entornos, secretos,
 claves, cachés y artefactos locales se excluyen mediante `.gitignore`.

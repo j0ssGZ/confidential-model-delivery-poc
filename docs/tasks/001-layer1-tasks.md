@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T05 completadas; T06 pendiente.
+- **Estado:** T01–T06 completadas; T07 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -85,11 +85,18 @@ las dependencias CUDA/NVIDIA del lock. Imagen local `cmdp-consumer:0.1.0`:
 
 ## T06 · Publicación inmutable en Hugging Face
 
+**Estado:** completada.
+
 **Resultado:** repositorio público `j0ssGZ/confidential-model-delivery-artifacts`
 con bundle y metadata permitidos; referencia por commit exacto.
 
 **Verificación:** inspección del repositorio confirma que no hay contenido en
 claro ni secretos; el token no aparece en historial, archivos ni logs.
+
+**Evidencia:** el repositorio público `J0ssGZ/confidential-model-delivery-artifacts`
+contiene únicamente `.gitattributes` y `minilm-l6-v2.bundle.enc` (91,7 MB).
+La referencia inmutable fijada para el consumer es
+`c6d037b94a2f9e1072198a9c8de94540ada55edc`.
 
 ## T07 · Recorrido positivo en kind
 
