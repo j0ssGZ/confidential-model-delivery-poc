@@ -58,6 +58,8 @@ def verify_local_model(model_directory: Path) -> None:
     ``local_files_only`` and a fresh cache ensure this check does not silently
     complete missing files from the Hub. The producer does not log model data.
     """
+    if not model_directory.is_dir():
+        raise BundleFormatError("downloaded model directory does not exist")
     with tempfile.TemporaryDirectory(prefix="cmdp-producer-cache-") as cache:
         previous_offline = os.environ.get("HF_HUB_OFFLINE")
         os.environ["HF_HUB_OFFLINE"] = "1"
@@ -98,10 +100,13 @@ def main(argv: list[str] | None = None) -> int:
     """Run the producer with local model/key paths supplied by the operator."""
     parser = argparse.ArgumentParser(description="Create the encrypted MiniLM bundle")
     parser.add_argument("--model-dir", required=True, type=Path)
+    parser.add_argument("--download-model", action="store_true")
     parser.add_argument("--key-file", required=True, type=Path)
     parser.add_argument("--output", type=Path, default=Path("artifacts") / BUNDLE_NAME)
     args = parser.parse_args(argv)
     try:
+        if args.download_model:
+            download_model(args.model_dir)
         result = produce(args.model_dir, args.key_file, args.output)
     except BundleFormatError as error:
         parser.error(str(error))
