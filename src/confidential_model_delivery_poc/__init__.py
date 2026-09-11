@@ -1,2 +1,6 @@
+"""Confidential Model Delivery PoC package."""
+
+
 def main() -> None:
-    print("Hello from confidential-model-delivery-poc!")
+    """Provide a minimal package-level command while Layer 1 is assembled."""
+    print("Confidential Model Delivery PoC")

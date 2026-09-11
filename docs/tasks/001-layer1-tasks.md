@@ -1,15 +1,22 @@
 # Tareas 001: Layer 1
 
-- **Estado:** propuestas; no iniciar implementación sin aprobación del plan.
+- **Estado:** T01 completada; T02 pendiente.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
+
+**Estado:** completada.
 
 **Resultado:** paquete Python con dependencias fijadas mediante `uv.lock`,
 estructura de producer/consumer y marco de pruebas.
 
 **Verificación:** instalación reproducible; pruebas base ejecutables; revisión
 de Git confirma que no se incluyen `.venv`, secretos, modelos ni artefactos.
+
+**Evidencia:** `uv run pytest` pasó con una prueba; el comando de paquete
+`uv run confidential-model-delivery-poc` respondió correctamente. El lock fija,
+entre otras dependencias directas, `cryptography 46.0.7`,
+`huggingface-hub 1.31.0`, `sentence-transformers 5.7.0` y `pytest 9.1.1`.
 
 ## T02 · Bundle v1 y extracción segura
 

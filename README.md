@@ -5,13 +5,12 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 1 ha cerrado su especificación y clarificación; el siguiente paso es
-aprobar el plan y las tareas verificables ya preparados. La especificación, el
-alcance, los criterios de aceptación, las amenazas y las decisiones quedan en
+Layer 1 está en implementación. La especificación, el alcance, los criterios
+de aceptación, las amenazas y las decisiones quedan en
 [`docs/specs/001-layer1.md`](docs/specs/001-layer1.md); el plan está en
-[`docs/plans/001-layer1-plan.md`](docs/plans/001-layer1-plan.md) y las tareas
-en [`docs/tasks/001-layer1-tasks.md`](docs/tasks/001-layer1-tasks.md). La
-implementación no comenzará hasta que plan y tareas estén aprobados.
+[`docs/plans/001-layer1-plan.md`](docs/plans/001-layer1-plan.md) y el progreso
+de tareas en [`docs/tasks/001-layer1-tasks.md`](docs/tasks/001-layer1-tasks.md).
+T01 está completada y T02 (bundle v1 y extracción segura) es el siguiente paso.
 
 Todavía no hay pipeline implementado ni artefactos publicados. `uv.lock` se
 mantiene bajo control de Git para reproducibilidad; los entornos, secretos,
