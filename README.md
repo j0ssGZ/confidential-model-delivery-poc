@@ -5,6 +5,12 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
+Layer 2 en preparación en la rama `layer2`: [spec en borrador](docs/specs/002-layer2.md),
+[plan](docs/plans/002-layer2-plan.md) y [tareas](docs/tasks/002-layer2-tasks.md).
+Sus decisiones técnicas están pendientes; los comandos de este README siguen
+siendo de Layer 1. La etiqueta `layer1-complete` conserva su entrega verificada
+en el commit `103b29c`.
+
 Layer 1 implementada y verificada, incluido el cierre correctivo T09–T12.
 La especificación, el alcance, los criterios
 de aceptación, las amenazas y las decisiones quedan en
