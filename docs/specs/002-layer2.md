@@ -1,7 +1,7 @@
 # Layer 2: firma del bundle cifrado
 
-Estado: borrador para aclaración. No implementado. Las decisiones D1–D4
-requieren confirmación de Jose antes de implementar.
+Estado: D1–D4 aprobadas por Jose el 11-09-2026. Implementación pendiente.
+Justificación y alternativas: [decisión 006](../decisions/006-layer2-signing-trust.md).
 
 ## Alcance y base aprobada
 
@@ -19,7 +19,7 @@ rechazar lo que no corresponda a ella. Host, imagen, código y operador siguen
 dentro de la frontera de confianza. Si el atacante sustituye también esa clave
 pública o el programa verificador, esta capa no ofrece la garantía prevista.
 
-## Decisiones propuestas, pendientes de confirmación
+## Decisiones aprobadas
 
 - **D1 — Algoritmo y bytes:** Ed25519 mediante `cryptography`; firmar todos los
   bytes exactos del bundle v1, incluida cabecera, metadata y ciphertext/tag.
@@ -46,7 +46,7 @@ rotar), selector de modo en una única CLI (más fácil omitir el modo firmado),
 claves binarias raw (más fácil confundirlas con AES). Se propone PEM para
 identificar el tipo de clave y una CLI dedicada para hacer explícita la política.
 
-## Contrato propuesto
+## Contrato
 
 El Producer firma el mismo bundle que entrega; un fallo de firma no debe
 presentarse como una entrega firmada completa. El operador publica bundle y

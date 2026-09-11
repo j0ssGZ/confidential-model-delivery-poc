@@ -1,7 +1,7 @@
 # Plan 002: Layer 2
 
-Estado: propuesta condicionada a D1–D4 de la [spec](../specs/002-layer2.md).
-No autoriza implementación mientras esas decisiones estén pendientes.
+Estado: D1–D4 de la [spec](../specs/002-layer2.md) aprobadas por Jose.
+Preparación documental completa; implementación pendiente.
 
 1. Cerrar decisiones con Jose y actualizar spec/Notion.
 2. Añadir módulo de claves y firma, generación exclusiva y tests criptográficos.
