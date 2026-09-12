@@ -5,7 +5,17 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 2 completada y verificada en la rama `layer2`: [spec](docs/specs/002-layer2.md),
+Layer 3 está en fase de Specification/Clarification en la rama `layer3`:
+[spec](docs/specs/003-layer3.md), [decisión pendiente](docs/decisions/007-layer3-attestation.md),
+[plan](docs/plans/003-layer3-plan.md) y [tareas](docs/tasks/003-layer3-tasks.md).
+Parte de `layer2-complete`, conservará la firma y sustituirá la entrega directa
+de la AES al workload por CDH + Trustee KBS. Todavía no está implementada: la
+instalación y el código están bloqueados hasta confirmar Ubuntu/KVM y fijar una
+matriz compatible de CoCo y Trustee. `kata-qemu-coco-dev` solo demostrará el
+protocolo de attestation, no confidencialidad respaldada por una TEE real.
+
+Layer 2 completada y verificada en la rama `layer2` y fijada por el tag anotado
+`layer2-complete` en `e9234b9`: [spec](docs/specs/002-layer2.md),
 [plan](docs/plans/002-layer2-plan.md) y [tareas](docs/tasks/002-layer2-tasks.md).
 Firma, Producer/Consumer firmado, Kubernetes con fixtures locales y descarga
 desde una revisión inmutable de Hugging Face están verificados. El positivo
@@ -13,8 +23,8 @@ carga el modelo; los cuatro negativos fallan con salida 2 según su frontera.
 [Runbook Kubernetes Layer 2](k8s/layer2/README.md) y
 [cierre Hub 006](docs/reports/006-layer2-hub-closure.md).
 Justificación: [firma y confianza de la clave pública](docs/decisions/006-layer2-signing-trust.md).
-Cada sección identifica la capa y sus recursos. La etiqueta `layer1-complete`
-conserva la entrega histórica en `103b29c`; `main` es la Layer 1 canónica.
+Cada sección identifica la capa y sus recursos. Las etiquetas `layer1-complete`
+y `layer2-complete` conservan los hitos; `main` es la Layer 1 canónica.
 
 Layer 1 implementada y verificada, incluido el cierre correctivo T09–T12.
 La especificación, el alcance, los criterios

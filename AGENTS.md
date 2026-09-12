@@ -77,6 +77,7 @@ cuando forme parte de los criterios de aceptación. La documentación y la
 implementación no deben atribuir a la PoC garantías de seguridad que realmente
 no proporciona.
 
-Para Layer 1, la spec vigente es
-[`docs/specs/001-layer1.md`](docs/specs/001-layer1.md). Sus decisiones
-pendientes bloquean la implementación del pipeline hasta ser resueltas.
+Las specs vigentes son [`docs/specs/001-layer1.md`](docs/specs/001-layer1.md),
+[`docs/specs/002-layer2.md`](docs/specs/002-layer2.md) y, en la rama `layer3`,
+[`docs/specs/003-layer3.md`](docs/specs/003-layer3.md). Las decisiones pendientes
+de la capa activa bloquean su implementación hasta ser resueltas.
