@@ -1,6 +1,6 @@
 # Plan 001: Layer 1
 
-- **Estado:** ejecutado; cierre correctivo verificado en informe 002.
+- **Estado:** ejecutado; cierre correctivo y complemento T13 verificados en informe 002.
 - **Fuente de alcance:** [`001-layer1.md`](../specs/001-layer1.md).
 - **Objetivo:** entregar y demostrar el recorrido reproducible de un bundle
   cifrado desde Hugging Face hasta un Job de Kubernetes que recupera MiniLM y
@@ -81,3 +81,11 @@ No incluye capas opcionales ni una nueva publicación innecesaria del bundle.
 Los criterios 1–2 se cubren en las tareas T01–T03; los criterios 3–5 en
 T04–T07; los criterios 6–8 en T02, T05 y T08; y el criterio 9 en T09. Ninguna
 tarea se considerará completada sin la evidencia indicada.
+
+## T13: Dockerfile del Producer (corrección literal del entregable)
+
+Alcance autorizado: añadir `Dockerfile.producer`, conservar `Dockerfile` para
+Consumer y no cambiar código CLI, publicación ni Kubernetes. El criterio 10
+se verifica en T13: suite existente, build, `--help`, inspección de imagen y
+smoke local con modelo/clave existentes de solo lectura y salida nueva.
+Documentar montajes y permisos, actualizar informes y Notion afectados.

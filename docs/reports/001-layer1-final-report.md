@@ -13,6 +13,11 @@ Kubernetes, recibe la clave desde un Secret montado como archivo, descarga por
 commit inmutable, descifra, extrae de forma segura y carga MiniLM con opciones
 locales y una caché temporal nueva. El Pod conserva acceso a la red.
 
+Se entregan `Dockerfile.producer` y `Dockerfile` (Consumer). La imagen Producer
+ejecuta la misma CLI con modelo/clave/salida montados en runtime; no incorpora
+esos datos ni publica en Hugging Face. Build, montajes y modo de descarga están
+en README; evidencia del complemento en el anexo T13 del informe 002.
+
 ## Por qué esas decisiones
 
 - AES-GCM aporta confidencialidad e integridad autenticada; la metadata forma

@@ -55,6 +55,60 @@ Esperado: `bundle_created=...` y `model_loaded=true embedding_shape=(1, 384)`.
 La carga verifica que todos los valores sean finitos. Sin `--download-model`,
 se usan archivos locales de confianza; la metadata no certifica su procedencia.
 
+## Dockerfiles de Producer y Consumer (Layer 1)
+
+El entregable incluye ambos workloads: `Dockerfile.producer` tiene entrypoint
+`cmdp-producer`; el `Dockerfile` raíz conserva `cmdp-consumer`. Ambos usan
+Python por digest, uv 0.12.12, `pyproject.toml` + `uv.lock` y UID/GID 10001.
+Solo se copian manifiestos del paquete, README y código; modelos, claves,
+credenciales y artefactos se proporcionan en runtime. El build del Producer
+no conserva caché de pip/uv.
+
+Desde la raíz, con modelo y clave AES ya existentes, crear una salida nueva:
+
+```sh
+docker build -f Dockerfile.producer -t cmdp-producer:0.1.0 .
+docker run --rm --network none cmdp-producer:0.1.0 --help
+mkdir -p artifacts
+producer_output=$(mktemp -d "$PWD/artifacts/producer-docker.XXXXXX")
+docker run --rm --network none --read-only \
+  --user "$(id -u):$(id -g)" \
+  --tmpfs /work:rw,nosuid,nodev,size=256m,mode=1777 \
+  --mount "type=bind,src=$PWD/models/minilm-l6-v2,dst=/model,readonly" \
+  --mount "type=bind,src=$PWD/secrets/model-key.bin,dst=/key.bin,readonly" \
+  --mount "type=bind,src=$producer_output,dst=/output" \
+  cmdp-producer:0.1.0 --model-dir /model --key-file /key.bin \
+  --output /output/minilm-l6-v2.bundle.enc
+```
+
+El operador debe ser un usuario no root con permiso para leer modelo/clave y
+escribir la salida. `--user` adapta los permisos de bind mounts en Linux sin
+relajar el 0600 de la clave; por defecto la imagen usa 10001. `/work` es temporal
+y escribible, mientras modelo/clave y raíz del contenedor son de solo lectura.
+Esperado: `bundle_created=/output/minilm-l6-v2.bundle.enc`; el archivo queda en
+`$producer_output`. No cambiar la clave de la demo ni reutilizar su ruta de salida.
+
+Para descargar el modelo público en runtime, crear un directorio vacío y
+montarlo escribible; habilitar la red omitiendo `--network none`:
+
+```sh
+mkdir -p models
+producer_model=$(mktemp -d "$PWD/models/producer-download.XXXXXX")
+producer_output=$(mktemp -d "$PWD/artifacts/producer-download.XXXXXX")
+docker run --rm --read-only --user "$(id -u):$(id -g)" \
+  --tmpfs /work:rw,nosuid,nodev,size=256m,mode=1777 \
+  --mount "type=bind,src=$producer_model,dst=/model" \
+  --mount "type=bind,src=$PWD/secrets/model-key.bin,dst=/key.bin,readonly" \
+  --mount "type=bind,src=$producer_output,dst=/output" \
+  cmdp-producer:0.1.0 --download-model --model-dir /model \
+  --key-file /key.bin --output /output/minilm-l6-v2.bundle.enc
+```
+
+Se conserva la revisión MiniLM fijada por la CLI. No hacen falta credenciales
+para ese modelo público. Las descargas y su caché auxiliar permanecen en el
+directorio montado, no en la imagen. El operador publica el bundle por separado
+como se describe abajo. No se añade un Job Producer ni se cambia el Job Consumer.
+
 ## Publicación y pareja bundle/clave
 
 Producer no sube a Hugging Face. El operador abre su repositorio en el Hub,

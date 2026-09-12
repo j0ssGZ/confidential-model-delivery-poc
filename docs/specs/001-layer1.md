@@ -1,6 +1,6 @@
 # Layer 1: entrega de un modelo cifrado
 
-Estado: Layer 1 implementada y verificada; cierre correctivo T09–T12 documentado
+Estado: Layer 1 implementada y verificada; cierre correctivo T09–T13 documentado
 en [informe 002](../reports/002-layer1-closure-verification.md).
 
 Esta spec se gestiona bajo el ciclo Specification-Driven Development definido
@@ -64,6 +64,12 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
 9. Las instrucciones permiten repetir el recorrido y los dos casos negativos,
    indicando entradas, comandos, resultados esperados y evidencias. `uv.lock`
    se conserva como archivo versionable para reproducir las dependencias.
+10. Entregar Dockerfiles para ambos workloads: `Dockerfile.producer` ejecuta
+    `cmdp-producer`; `Dockerfile` conserva `cmdp-consumer`. Misma base fijada,
+    uv y dependencias bloqueadas, usuario no root y entradas/salidas montadas
+    al ejecutar. Ninguna imagen incorpora modelos, claves ni credenciales del
+    operador. Producer conserva `--download-model` y crea solo el bundle local;
+    la publicación sigue siendo una operación separada del operador.
 
 ## Convenciones locales y motivo de las exclusiones
 
