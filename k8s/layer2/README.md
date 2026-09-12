@@ -10,7 +10,7 @@ Desde la raíz, con `uv sync --locked`, modelo/pareja cifrada firmada local y
 las claves correspondientes. No generar claves nuevas para abrir otro bundle.
 
 ```sh
-docker build --tag cmdp-consumer:layer2 .
+docker build -f Dockerfile.consumer -t cmdp-consumer:layer2 .
 kind load docker-image --name secure-ai-repro cmdp-consumer:layer2
 kubectl --context kind-secure-ai-repro apply -f k8s/layer2/namespace.yaml
 uv run python scripts/provision_layer2.py --context kind-secure-ai-repro \

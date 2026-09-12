@@ -65,8 +65,8 @@ frente a un administrador del clúster ni confidencialidad durante la ejecución
    indicando entradas, comandos, resultados esperados y evidencias. `uv.lock`
    se conserva como archivo versionable para reproducir las dependencias.
 10. Entregar Dockerfiles para ambos workloads: `Dockerfile.producer` ejecuta
-    `cmdp-producer`; `Dockerfile` conserva `cmdp-consumer`. Misma base fijada,
-    uv y dependencias bloqueadas, usuario no root y entradas/salidas montadas
+    `cmdp-producer`; `Dockerfile.consumer` ejecuta `cmdp-consumer`. Misma base
+    fijada, uv y dependencias bloqueadas, usuario no root y entradas/salidas montadas
     al ejecutar. Ninguna imagen incorpora modelos, claves ni credenciales del
     operador. Producer conserva `--download-model` y crea solo el bundle local;
     la publicación sigue siendo una operación separada del operador.

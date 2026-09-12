@@ -97,11 +97,11 @@ se usan archivos locales de confianza; la metadata no certifica su procedencia.
 ## Dockerfiles de Producer y Consumer (Layer 1)
 
 El entregable incluye ambos workloads: `Dockerfile.producer` tiene entrypoint
-`cmdp-producer`; el `Dockerfile` raíz conserva `cmdp-consumer`. Ambos usan
+`cmdp-producer`; `Dockerfile.consumer` tiene `cmdp-consumer`. Ambos usan
 Python por digest, uv 0.12.12, `pyproject.toml` + `uv.lock` y UID/GID 10001.
 Solo se copian manifiestos del paquete, README y código; modelos, claves,
-credenciales y artefactos se proporcionan en runtime. El build del Producer
-no conserva caché de pip/uv.
+credenciales y artefactos se proporcionan en runtime. Los builds no conservan
+caché de pip/uv.
 
 Desde la raíz, con modelo y clave AES ya existentes, crear una salida nueva:
 
@@ -169,7 +169,7 @@ Si ya existe `secure-ai`, omitir `kind create cluster`; no borrar el clúster.
 ```sh
 kind create cluster --name secure-ai --image kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed --wait 5m
 kubectl --context kind-secure-ai get nodes
-docker build --tag cmdp-consumer:0.1.0 .
+docker build -f Dockerfile.consumer -t cmdp-consumer:0.1.0 .
 kind load docker-image --name secure-ai cmdp-consumer:0.1.0
 kubectl --context kind-secure-ai apply -f k8s/namespace.yaml -f k8s/bundle-source.yaml
 sh scripts/create_model_secret.sh secrets/model-key.bin
