@@ -45,11 +45,15 @@ inválida impide invocar el descifrado.
 
 ## Verificación y límites
 
-La suite vigente tiene 84 tests, incluidos los 36 de Layer 1. El historial se
-revisa con las AES conocidas y una comprobación específica de la privada
-Ed25519. Esta revisión es acotada: no demuestra ausencia de secretos
-desconocidos, ni audita reflogs, permisos completos del Hub o infraestructura
-de producción.
+La suite vigente pasó: 84 tests en 3,10 s, incluidos los 36 de Layer 1. El
+escáner recorrió 170 blobs con las dos AES conocidas y produjo un hallazgo:
+`6fee8c7acc15ceb01978deb968f3b9719aedca2b`, el archivo `signing.py` por su
+cadena literal de cabecera PEM. La inspección confirmó que es el falso positivo
+ya documentado. Una comprobación específica de la privada Ed25519 conocida
+recorrió los mismos 170 blobs y obtuvo cero coincidencias con PEM, raw,
+hexadecimal o Base64. Esta revisión es acotada: no demuestra ausencia de
+secretos desconocidos, ni audita reflogs, permisos completos del Hub o
+infraestructura de producción.
 
 Los Pods hicieron descargas públicas sin token; la advertencia de rate limit no
 afectó el resultado. La clave pública continúa en ConfigMap, la AES en Secret y
