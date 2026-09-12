@@ -84,8 +84,9 @@ tarea se considerará completada sin la evidencia indicada.
 
 ## T13: Dockerfile del Producer (corrección literal del entregable)
 
-Alcance autorizado: añadir `Dockerfile.producer`, conservar `Dockerfile` para
-Consumer y no cambiar código CLI, publicación ni Kubernetes. El criterio 10
+Alcance autorizado: añadir `Dockerfile.producer`, renombrar el Dockerfile de
+Consumer a `Dockerfile.consumer` sin cambiar su comportamiento, y no cambiar
+código CLI, publicación ni Kubernetes. El criterio 10
 se verifica en T13: suite existente, build, `--help`, inspección de imagen y
 smoke local con modelo/clave existentes de solo lectura y salida nueva.
 Documentar montajes y permisos, actualizar informes y Notion afectados.

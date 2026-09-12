@@ -70,8 +70,8 @@ de que exista un directorio recuperado.
 
 **Estado:** completada.
 
-**Resultado:** Dockerfile de la imagen local, manifiesto de `Job`, montaje del
-Secret y `emptyDir`, recursos acordados y comandos locales no versionados para
+**Resultado:** `Dockerfile.consumer` para la imagen local, manifiesto de `Job`,
+montaje del Secret y `emptyDir`, recursos acordados y comandos locales no versionados para
 crear/actualizar el Secret.
 
 **Verificación:** inspección de imagen confirma ausencia de modelo, bundle,
@@ -167,12 +167,13 @@ una revisión adicional del PDF.
 
 **Estado:** completada; alcance y decisiones indicados expresamente por el usuario.
 
-Añadir `Dockerfile.producer` y ejemplos de montajes runtime; conservar el
-Dockerfile Consumer y el comportamiento de Layer 1. Verificar suite, build,
+Añadir `Dockerfile.producer` y ejemplos de montajes runtime; nombrar el
+Dockerfile Consumer como `Dockerfile.consumer` y conservar el comportamiento
+de Layer 1. Verificar suite, build,
 CLI, capas de imagen y smoke aislado sin regenerar claves, sobrescribir la
 demo ni publicar artefactos. Evidencia en el anexo T13 del informe 002.
-Resultado: 84 tests, build y ayuda CLI correctos; smoke sin red seguido de
-carga Consumer `(1, 384)`; nueve capas inspeccionadas sin datos prohibidos ni
+Resultado en `main`: 36 tests Layer 1, builds y ayudas CLI correctos; smoke sin
+red seguido de carga Consumer `(1, 384)`; 18 capas inspeccionadas sin datos prohibidos ni
 coincidencias con los secretos conocidos. El criterio de descarga en runtime
 se conserva en la CLI y está documentado; no se repitió una descarga de red.
 

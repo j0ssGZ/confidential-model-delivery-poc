@@ -96,17 +96,19 @@ explícito para evitar confusiones.
 La defensa oral requiere ensayo con Jose. No se marca como terminada por estos
 resultados. Las capas opcionales se deciden después, bajo SDD.
 
-## Anexo T13 · Dockerfile Producer · 12-09-2026
+## Anexo T13 · Dockerfiles Producer y Consumer · 12-09-2026
 
 Corrección literal autorizada: el entregable exige Dockerfiles de Producer y
-Consumer. Se añade `Dockerfile.producer`; el Dockerfile raíz, código Python,
-dependencias, claves, publicación y manifiestos Kubernetes quedan intactos.
+Consumer. Se añade `Dockerfile.producer` y el Dockerfile Consumer se renombra
+a `Dockerfile.consumer` sin cambiar su runtime; código Python, dependencias,
+claves, publicación y manifiestos Kubernetes quedan intactos.
 Base de esta corrección: `5371dda` en la rama existente `layer2`. La presencia
 de código previo de Layer 2 en esa rama no implica implementación adicional
-en esta tarea. La etiqueta histórica `layer1-complete` no se mueve.
+en esta tarea. El cambio T13 se portó aisladamente a `main`; la etiqueta
+histórica `layer1-complete` no se mueve.
 
-Misma base Python por digest, uv 0.12.12, lock y UID/GID 10001. Producer usa
-`--no-cache` al instalar; `TMPDIR=/tmp` solo durante build, `/work` en runtime.
+Misma base Python por digest, uv 0.12.12, lock y UID/GID 10001. Ambas imágenes
+usan `--no-cache` al instalar; `TMPDIR=/tmp` solo durante build, `/work` en runtime.
 El primer build falló porque uv sin caché intentaba usar `/work` inexistente;
 se corrigió ese directorio temporal de build y la repetición terminó bien.
 Se mantienen COPY explícitos; `.dockerignore` y AGENTS ya cubren el proceso
@@ -117,40 +119,51 @@ Comandos ejecutados desde la raíz del proyecto (operador no root):
 
 ```sh
 .venv/bin/python -m pytest -q
+docker build -f Dockerfile.consumer -t cmdp-consumer:0.1.0 .
 docker build -f Dockerfile.producer -t cmdp-producer:0.1.0 .
+docker run --rm --network none cmdp-consumer:0.1.0 --help
 docker run --rm --network none cmdp-producer:0.1.0 --help
+docker image inspect cmdp-consumer:0.1.0 --format '{{.Id}} user={{.Config.User}} entrypoint={{json .Config.Entrypoint}}'
 docker image inspect cmdp-producer:0.1.0 --format '{{.Id}} user={{.Config.User}} entrypoint={{json .Config.Entrypoint}}'
 mktemp -d /private/tmp/cmdp-producer-smoke.XXXXXX
 docker run --rm --network none --read-only --user "$(id -u):$(id -g)" \
   --tmpfs /work:rw,nosuid,nodev,size=256m,mode=1777 \
   --mount "type=bind,src=$PWD/models/minilm-l6-v2,dst=/model,readonly" \
   --mount "type=bind,src=$PWD/secrets/model-key.bin,dst=/key.bin,readonly" \
-  --mount type=bind,src=/private/tmp/cmdp-producer-smoke.Py7KED,dst=/output \
+  --mount type=bind,src=/private/tmp/cmdp-main-producer-smoke.L0DLSV,dst=/output \
   cmdp-producer:0.1.0 --model-dir /model --key-file /key.bin \
   --output /output/minilm-l6-v2.bundle.enc
-.venv/bin/cmdp-consumer --bundle /private/tmp/cmdp-producer-smoke.Py7KED/minilm-l6-v2.bundle.enc \
-  --key-file secrets/model-key.bin --work-dir /private/tmp/cmdp-producer-smoke.Py7KED/consumer-check
-docker image save -o /private/tmp/cmdp-producer-smoke.Py7KED/image.tar cmdp-producer:0.1.0
-docker history --no-trunc cmdp-producer:0.1.0
-.venv/bin/python /private/tmp/cmdp-producer-smoke.Py7KED/audit_layers.py
+docker run --rm --network none --read-only --user "$(id -u):$(id -g)" \
+  --tmpfs /work:rw,nosuid,nodev,size=512m,mode=1777 \
+  --mount type=bind,src=/private/tmp/cmdp-main-producer-smoke.L0DLSV/minilm-l6-v2.bundle.enc,dst=/bundle.enc,readonly \
+  --mount "type=bind,src=$PWD/secrets/model-key.bin,dst=/key.bin,readonly" \
+  cmdp-consumer:0.1.0 --bundle /bundle.enc --key-file /key.bin \
+  --work-dir /work/consumer-check
+docker image save -o /private/tmp/cmdp-main-producer-smoke.L0DLSV/consumer-image.tar cmdp-consumer:0.1.0
+docker image save -o /private/tmp/cmdp-main-producer-smoke.L0DLSV/producer-image.tar cmdp-producer:0.1.0
+.venv/bin/python /private/tmp/cmdp-main-producer-smoke.L0DLSV/audit_images.py \
+  /private/tmp/cmdp-main-producer-smoke.L0DLSV/consumer-image.tar \
+  /private/tmp/cmdp-main-producer-smoke.L0DLSV/producer-image.tar
 shasum -a 256 artifacts/minilm-l6-v2.bundle.enc
-git diff -- Dockerfile pyproject.toml uv.lock src k8s AGENTS.md
+git diff -- Dockerfile.consumer Dockerfile.producer pyproject.toml uv.lock src k8s AGENTS.md
 git diff --check
 ```
 
 Resultados:
 
-- Suite existente: **84 passed in 3.34s**. No se añadieron tests de código
+- Suite Layer 1 en `main`: **36 passed in 3.03s**. No se añadieron tests de código
   porque solo se añadió empaquetado; su validación se hizo sobre la imagen real.
-- Build correcto; imagen
-  `sha256:dfa3372f2590e1e043faf205b5b4ab86cb41e8b7febab14ab234ed0211db1b9c`.
-  CLI ayuda salida 0, incluye `--download-model`; usuario `10001:10001` y
-  entrypoint `["cmdp-producer"]` comprobados.
+- Builds correctos: Consumer
+  `sha256:b9ab64a8c8402b72cfcaef08682afbe0b78d21bd186f989c0a432ec999226704`
+  y Producer
+  `sha256:1c6e9988fa9d6d7822be55f5672f9fcaa3760ef6ec35261b8c32f0263428a97e`.
+  Ambas ayudas CLI dieron salida 0; Producer incluye `--download-model`.
+  Usuario `10001:10001` y entrypoints correspondientes comprobados.
 - Smoke sin red, raíz read-only, modelo/clave read-only y salida nueva:
   `bundle_created=/output/minilm-l6-v2.bundle.enc`. Consumer carga el resultado:
   `model_loaded=true embedding_shape=(1, 384)`.
-- Escáner temporal de las nueve capas exportadas y configuración/historial:
-  27.779 archivos, cero rutas de datos prohibidas y cero coincidencias con
+- Escáner temporal de las 18 capas exportadas de ambas imágenes:
+  55.552 archivos, cero rutas de datos prohibidas y cero coincidencias con
   AES conocidas y PEM privada local (bytes/hex/Base64). Sin safetensors,
   bundles ni cachés pip/uv/Hugging Face del operador. Revisión acotada, no una
   garantía de ausencia de todo secreto desconocido o vulnerabilidad.
@@ -158,14 +171,18 @@ Resultados:
   `f88c4205b748c88380da9d6e85182370649f38e740811d8d6fa93df82b5fa76b`,
   comprobado antes y después. Clave positiva solo montada read-only; no se
   regeneró ni escribió. Sin publicación Hub ni operaciones Kubernetes.
-- Diff de código, lock, Dockerfile Consumer, k8s y AGENTS vacío.
+- La auditoría detectó caché uv histórica en la imagen Consumer; se eliminó
+  añadiendo `--no-cache` sin cambiar su comportamiento runtime. Fuera de este
+  ajuste de empaquetado y del renombrado explícito, diff de código, lock, k8s
+  y AGENTS vacío.
   `git diff --check`: correcto.
 
-El temporal de smoke y la exportación de imagen se conservan en
-`/private/tmp/cmdp-producer-smoke.Py7KED`. No contienen una copia de la clave.
+El temporal de smoke y las exportaciones de imagen se conservan en
+`/private/tmp/cmdp-main-producer-smoke.L0DLSV`. No contienen una copia de la
+clave.
 La descarga de red no se repitió: se conserva la CLI existente y README muestra
 el montaje escribible requerido para `--download-model`. Imagen probada en
 Linux ARM64; otros hosts requieren build para su arquitectura y permisos de
 montaje apropiados. La publicación sigue siendo responsabilidad del operador.
-Notion principal y defensa se actualizan solo en sus referencias al Dockerfile
-Producer; no cambian el alcance ni las evidencias de las capas opcionales.
+Notion principal y defensa se actualizan solo en sus referencias a los dos
+Dockerfiles; no cambian el alcance ni las evidencias de las capas opcionales.
