@@ -9,12 +9,13 @@ Estado: preparación documental. [Spec](../specs/002-layer2.md) y
 - [x] L2-03: claves/firmas y pruebas de formato, fallos y no sobrescritura.
 - [x] L2-04: Producer y Consumer firmado; orden verificación-descifrado,
   mismos bytes, errores y compatibilidad con Layer 1.
-- [ ] L2-05: imagen/Jobs y ConfigMap dedicado de clave pública.
+- [x] L2-05: imagen/Jobs y ConfigMap dedicado; cinco casos con fixtures locales.
 - [ ] L2-06: publicación inmutable, positivo y negativos Kubernetes.
 - [ ] L2-07: evidencias, revisión acotada de secretos y cierre documental/Notion.
 
-L2-05 es el siguiente paso. Los checks de despliegue y verificación
-permanecen abiertos hasta contar con pruebas.
+L2-06 sigue pendiente de publicación y descarga desde Hub. El laboratorio
+local no cierra ese criterio. L2-07 tiene revisión acotada y documentación
+actualizadas, pero no cierre final. Evidencia actual: informe 005, 84 tests.
 
 Evidencia L2-03: [informe 003](../reports/003-layer2-signing-module.md):
 56 tests correctos (36 previos y 20 nuevos), cryptography 46.0.7.

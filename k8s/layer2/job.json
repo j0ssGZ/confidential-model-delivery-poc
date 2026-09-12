@@ -1,0 +1,46 @@
+{
+  "apiVersion": "batch/v1",
+  "kind": "Job",
+  "metadata": {"name": "signed-consumer", "namespace": "secure-ai-layer2"},
+  "spec": {
+    "backoffLimit": 0,
+    "activeDeadlineSeconds": 300,
+    "template": {
+      "spec": {
+        "serviceAccountName": "signed-consumer",
+        "automountServiceAccountToken": false,
+        "restartPolicy": "Never",
+        "securityContext": {
+          "runAsNonRoot": true, "fsGroup": 10001,
+          "seccompProfile": {"type": "RuntimeDefault"}
+        },
+        "containers": [{
+          "name": "consumer",
+          "image": "cmdp-consumer:layer2",
+          "imagePullPolicy": "Never",
+          "command": ["cmdp-consumer-signed"],
+          "args": [],
+          "resources": {
+            "requests": {"cpu": "1", "memory": "1Gi"},
+            "limits": {"cpu": "2", "memory": "2Gi"}
+          },
+          "securityContext": {
+            "allowPrivilegeEscalation": false,
+            "capabilities": {"drop": ["ALL"]},
+            "readOnlyRootFilesystem": true
+          },
+          "volumeMounts": [
+            {"name": "public-key", "mountPath": "/etc/model-signing", "readOnly": true},
+            {"name": "aes-key", "mountPath": "/var/run/secrets/model-delivery", "readOnly": true},
+            {"name": "work", "mountPath": "/work"}
+          ]
+        }],
+        "volumes": [
+          {"name": "public-key", "configMap": {"name": "model-signing-public-key"}},
+          {"name": "aes-key", "secret": {"secretName": "model-decryption-key"}},
+          {"name": "work", "emptyDir": {"sizeLimit": "1Gi"}}
+        ]
+      }
+    }
+  }
+}

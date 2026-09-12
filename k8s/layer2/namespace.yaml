@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: secure-ai-layer2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: signed-consumer
+  namespace: secure-ai-layer2
+automountServiceAccountToken: false

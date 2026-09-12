@@ -2,7 +2,13 @@
 
 Estado: D1–D4 aprobadas por Jose el 11-09-2026. Módulo criptográfico L2-03
 verificado; integración Producer/Consumer L2-04 verificada localmente.
-Kubernetes y publicación firmada pendientes.
+Kubernetes con fixtures locales verificado (informe 005). Publicación y
+descarga firmadas desde Hub pendientes; no se declara Layer 2 cerrada.
+Para comprobar Kubernetes sin credenciales Hub, se admite un ensayo local
+explícito con fixtures cifradas en el nodo kind y montaje de solo lectura.
+Ese ensayo no satisface el criterio de descarga del bundle firmado desde Hub.
+Los recursos Layer 2 usarán namespace `secure-ai-layer2` y ServiceAccount sin
+token montado ni concesiones RBAC nuevas. Su acceso efectivo se comprobará.
 Justificación y alternativas: [decisión 006](../decisions/006-layer2-signing-trust.md).
 
 ## Alcance y base aprobada

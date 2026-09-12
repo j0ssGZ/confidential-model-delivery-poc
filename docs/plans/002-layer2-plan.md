@@ -2,7 +2,8 @@
 
 Estado: D1–D4 de la [spec](../specs/002-layer2.md) aprobadas por Jose.
 Preparación documental y módulo de claves/firma completos (L2-03, informe 003).
-Integración Producer/Consumer verificada localmente; despliegue y cierre pendientes.
+Integración Producer/Consumer y Kubernetes con fixtures locales verificados.
+Publicación, descarga desde Hub y cierre final pendientes por acceso de publicación.
 
 1. Cerrar decisiones con Jose y actualizar spec/Notion.
 2. Añadir módulo de claves y firma, generación exclusiva y tests criptográficos.
