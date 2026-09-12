@@ -1,5 +1,8 @@
 # Evidencia L2-04: pipeline firmado local
 
+Actualización: publicación y Kubernetes desde Hub cerrados en el
+[informe 006](006-layer2-hub-closure.md). Lo siguiente conserva el checkpoint local.
+
 11-09-2026, rama `layer2`, base L2-03 `f11ccc3`.
 
 - Suite: **73 passed in 3.02s**, incluidos los tests anteriores.

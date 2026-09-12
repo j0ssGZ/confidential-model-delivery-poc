@@ -1,9 +1,8 @@
 # Plan 002: Layer 2
 
-Estado: D1–D4 de la [spec](../specs/002-layer2.md) aprobadas por Jose.
-Preparación documental y módulo de claves/firma completos (L2-03, informe 003).
-Integración Producer/Consumer y Kubernetes con fixtures locales verificados.
-Publicación, descarga desde Hub y cierre final pendientes por acceso de publicación.
+Estado: completado. D1–D4 de la [spec](../specs/002-layer2.md), módulo de
+claves/firma, integración, fixtures locales y los cinco recorridos Hub están
+verificados. Cierre y revisión inmutable en el informe 006.
 
 1. Cerrar decisiones con Jose y actualizar spec/Notion.
 2. Añadir módulo de claves y firma, generación exclusiva y tests criptográficos.
@@ -16,4 +15,4 @@ Publicación, descarga desde Hub y cierre final pendientes por acceso de publica
    README, specs, tareas y las páginas de Notion afectadas.
 
 Cada paso tiene commit pequeño, validación proporcional y publicación en
-`layer2`. No fusionar a `main` como parte de esta preparación.
+`layer2`. Layer 2 permanece en su rama; `main` continúa como Layer 1 canónica.

@@ -1,9 +1,9 @@
 # Layer 2: firma del bundle cifrado
 
-Estado: D1–D4 aprobadas por Jose el 11-09-2026. Módulo criptográfico L2-03
-verificado; integración Producer/Consumer L2-04 verificada localmente.
-Kubernetes con fixtures locales verificado (informe 005). Publicación y
-descarga firmadas desde Hub pendientes; no se declara Layer 2 cerrada.
+Estado: completada y verificada el 12-09-2026. D1–D4, módulo criptográfico,
+integración Producer/Consumer, Kubernetes con fixtures locales y recorrido Hub
+están comprobados. Bundle y firma se descargaron desde la revisión inmutable
+`11eefa27b9f320b95263e1b00c09f2d2cbe36181`; evidencia en el informe 006.
 Para comprobar Kubernetes sin credenciales Hub, se admite un ensayo local
 explícito con fixtures cifradas en el nodo kind y montaje de solo lectura.
 Ese ensayo no satisface el criterio de descarga del bundle firmado desde Hub.
@@ -41,8 +41,8 @@ pública o el programa verificador, esta capa no ofrece la garantía prevista.
 - **D3 — Confianza pública:** ConfigMap dedicado creado por el operador desde
   su archivo público de confianza y montado de solo lectura. La clave pública
   no se obtiene del mismo origen sustituible que el bundle. No necesita secreto;
-  necesita integridad. Permite cambiarla sin reconstruir la imagen. El nombre
-  propuesto del ConfigMap es `model-signing-public-key`.
+  necesita integridad. Permite cambiarla sin reconstruir la imagen. El ConfigMap
+  se llama `model-signing-public-key`.
 - **D4 — Interfaz:** nuevo entrypoint `cmdp-consumer-signed` que exige clave
   pública y firma; conservar `cmdp-consumer` para Layer 1. Producer incorpora
   opción explícita de firma. No permitir fallback sin firma en el entrypoint
@@ -87,6 +87,10 @@ Errores controlados, salida no cero, sin claves ni contenido del modelo en logs.
 8. Privada ausente de Git, imagen, Hub y logs; revisión con alcance explícito.
 9. README, spec, plan, tareas, Notion y evidencias sincronizados antes del cierre.
 
+Resultado: criterios 1–9 satisfechos. El recorrido Hub produjo un Job positivo
+con salida 0 y cuatro Jobs negativos con salida 2. Los tests instrumentados
+aportan la evidencia del orden interno verificación → descifrado.
+
 ## Límites y referencias
 
 Firma no significa calidad del modelo, protección del host ni confidencialidad.
@@ -99,5 +103,5 @@ Se mantiene el procesamiento completo del bundle en RAM de esta PoC.
   la documentación latest puede describir una versión posterior.
 - [Layer 1](001-layer1.md).
 - [Notion Layer 2](https://app.notion.com/p/3d878dc87e92819aaedbe32909c3885a).
-- [Plan propuesto](../plans/002-layer2-plan.md).
-- [Tareas propuestas](../tasks/002-layer2-tasks.md).
+- [Plan](../plans/002-layer2-plan.md).
+- [Tareas](../tasks/002-layer2-tasks.md).

@@ -1,6 +1,6 @@
 # Decisión 006: firma y confianza de la clave pública
 
-Estado: D1–D4 aprobadas por Jose el 11-09-2026. Diseño, aún no implementado.
+Estado: D1–D4 aprobadas por Jose el 11-09-2026; implementadas y verificadas.
 Contrato: [spec Layer 2](../specs/002-layer2.md).
 
 ## ConfigMap explicado para la defensa
@@ -12,7 +12,7 @@ montarla como archivos en un Pod. No cifra su contenido. Referencia:
 Nuestro diseño: el operador toma `keys/signing-public.pem`, crea el objeto
 `model-signing-public-key` con entrada `public.pem`, y el Job la monta en
 `/etc/model-signing/public.pem`. Consumer recibe esa ruta y verifica la firma.
-Es un recorrido previsto, no un despliegue ya realizado.
+El recorrido se verificó en Kubernetes con fixtures locales y desde Hub.
 
 Tres piezas diferentes: privada Ed25519 en el equipo que firma; pública
 Ed25519 en ConfigMap para comprobar firmas; clave AES en Secret para descifrar.
@@ -31,7 +31,8 @@ imagen y permisos. RBAC permite limitar acciones sobre recursos; los permisos
 efectivos deben comprobarse en el despliegue, no inferirse por el nombre del
 objeto. [RBAC oficial](https://kubernetes.io/docs/reference/access-authn-authz/rbac/).
 El proceso consume un archivo y no necesita consultar la API de Kubernetes.
-No se atribuye al laboratorio una auditoría RBAC que todavía no se ha realizado.
+La ServiceAccount devolvió `no` al comprobar `update configmaps`; sigue siendo
+una comprobación acotada, no una auditoría completa de RBAC.
 
 ## Alternativas defendibles
 

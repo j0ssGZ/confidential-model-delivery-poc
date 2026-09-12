@@ -1,7 +1,12 @@
 # Evidencia L2-05: Kubernetes con fixtures locales
 
-Fecha de cierre: 12-09-2026. Base de código firmada `dce5e4d`, manifiestos y
-scripts incorporados con este informe. Layer 2 sigue pendiente de cierre Hub.
+Actualización: publicación y cinco Jobs Hub cerrados en el
+[informe 006](006-layer2-hub-closure.md). Lo siguiente conserva el checkpoint
+con fixtures locales.
+
+Fecha del checkpoint: 12-09-2026. Base de código firmada `dce5e4d`, manifiestos
+y scripts incorporados con este informe. En ese momento quedaba pendiente el
+cierre Hub, completado posteriormente en el informe 006.
 
 ## Pruebas
 

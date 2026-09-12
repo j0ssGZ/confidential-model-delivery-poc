@@ -5,17 +5,16 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 2 en preparación en la rama `layer2`: [spec aprobada](docs/specs/002-layer2.md),
+Layer 2 completada y verificada en la rama `layer2`: [spec](docs/specs/002-layer2.md),
 [plan](docs/plans/002-layer2-plan.md) y [tareas](docs/tasks/002-layer2-tasks.md).
-Sus decisiones D1–D4 están aprobadas; firma y Producer/Consumer firmado probados
-localmente. Kubernetes con fixtures locales también está verificado;
-publicación y descarga firmadas desde Hub siguen pendientes.
+Firma, Producer/Consumer firmado, Kubernetes con fixtures locales y descarga
+desde una revisión inmutable de Hugging Face están verificados. El positivo
+carga el modelo; los cuatro negativos fallan con salida 2 según su frontera.
 [Runbook Kubernetes Layer 2](k8s/layer2/README.md) y
-[evidencia 005](docs/reports/005-layer2-kubernetes-fixtures.md).
+[cierre Hub 006](docs/reports/006-layer2-hub-closure.md).
 Justificación: [firma y confianza de la clave pública](docs/decisions/006-layer2-signing-trust.md).
-Los comandos de este README siguen
-siendo de Layer 1. La etiqueta `layer1-complete` conserva su entrega verificada
-en el commit `103b29c`.
+Cada sección identifica la capa y sus recursos. La etiqueta `layer1-complete`
+conserva la entrega histórica en `103b29c`; `main` es la Layer 1 canónica.
 
 Layer 1 implementada y verificada, incluido el cierre correctivo T09–T12.
 La especificación, el alcance, los criterios
@@ -50,7 +49,7 @@ uv sync --locked
 uv run pytest -q
 ```
 
-## Layer 2: recorrido firmado local
+## Layer 2: recorrido firmado local y publicado
 
 Disponible en la rama `layer2`. Generar una pareja NUEVA una sola vez:
 
@@ -76,6 +75,13 @@ se omiten `--bundle`/`--signature` y se pasan `--repo-id` y `--revision` complet
 Salida correcta: `signature_verified=true model_loaded=true embedding_shape=(1, 384)`.
 Un fallo de firma ocurre antes de leer la AES o descifrar. Verificación y
 descifrado consumen la misma instantánea de bytes.
+
+La pareja comprobada está publicada en el
+[commit inmutable de Hugging Face](https://huggingface.co/J0ssGZ/confidential-model-delivery-artifacts/tree/11eefa27b9f320b95263e1b00c09f2d2cbe36181)
+`11eefa27b9f320b95263e1b00c09f2d2cbe36181`. El operador publicó únicamente
+el bundle cifrado y su firma; la privada Ed25519 y la AES permanecen fuera.
+Los cinco Jobs Hub y sus resultados están en el
+[runbook](k8s/layer2/README.md).
 
 ## Claves y Producer: crear un bundle nuevo
 
@@ -227,7 +233,8 @@ logs dejarán de estar disponibles en Kubernetes: conservar evidencia antes.
 - La clave local/Secret persisten. El Consumer retira solo su temporal;
   `emptyDir` desaparece al retirar el Pod. No es borrado seguro ni RAM exclusiva.
 - AESGCM/TAR completos en RAM. Nonce aleatorio sin registro de colisiones.
-- `.gitignore` no es un escáner de secretos. Layer 2/3 no están implementadas.
+- `.gitignore` no es un escáner de secretos. Layer 2 está implementada y
+  verificada; Layer 3 no está implementada.
 
 El ensayo personal de defensa requiere participación de Jose y no se da por
 terminado al pasar las pruebas automáticas.

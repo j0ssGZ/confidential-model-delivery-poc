@@ -53,21 +53,25 @@ Esperado: positivo Complete, salida 0; tres negativos de firma salida 2 con
 `bundle authentication failed`. Cada negativo altera una copia en `/work`,
 sin cambiar las fixtures ni los recursos de claves.
 
-## Variante Hub: pendiente de publicación
+## Variante Hub verificada
 
-Subir SOLO `minilm-l6-v2.bundle.enc` y `.enc.sig` al repositorio de artefactos,
-en un nuevo commit, conservando el commit histórico de Layer 1. Copiar la
-revisión completa y reemplazar el placeholder siguiente; no ejecutar literalmente:
+La pareja se publicó conservando el commit histórico de Layer 1. Revisión
+inmutable verificada: `11eefa27b9f320b95263e1b00c09f2d2cbe36181`.
 
 ```sh
-uv run python scripts/layer2_jobs.py --case positive --revision COMMIT_COMPLETO_DE_40_HEX | \
-  kubectl --context kind-secure-ai-repro create -f -
+for case_name in positive tampered-bundle tampered-signature wrong-public wrong-aes; do
+  uv run python scripts/layer2_jobs.py --case "$case_name" \
+    --revision 11eefa27b9f320b95263e1b00c09f2d2cbe36181 | \
+    kubectl --context kind-secure-ai-repro create -f -
+done
 ```
 
-Repetir con los cuatro casos negativos. El renderizador rechaza revisiones
-mutables/incompletas y no añade hostPath en modo Hub. Ambos archivos se
-descargan de la misma revisión. Nombres `signed-hub-*`, distintos del ensayo
-local. No existe todavía una revisión publicada de Layer 2 verificada.
+El renderizador rechaza revisiones mutables/incompletas y no añade hostPath en
+modo Hub. Ambos archivos se descargan de la misma revisión. `signed-hub-positive`
+terminó Complete, salida 0 y embedding `(1, 384)`; los otros cuatro Jobs
+terminaron Failed, salida 2. Los tres casos de firma mostraron
+`bundle signature verification failed`; AES incorrecta mostró
+`bundle authentication failed`. Evidencia completa en el informe 006.
 
 ## Confianza y permisos
 
