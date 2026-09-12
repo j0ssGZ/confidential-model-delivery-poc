@@ -1,6 +1,6 @@
 # Tareas 001: Layer 1
 
-- **Estado:** T01–T08 con evidencia histórica; T09–T12 verificadas en informe 002.
+- **Estado:** T01–T08 con evidencia histórica; T09–T13 verificadas en informe 002.
 - **Plan asociado:** [`001-layer1-plan.md`](../plans/001-layer1-plan.md).
 
 ## T01 · Dependencias, estructura y pruebas base
@@ -162,6 +162,19 @@ Los resultados de 12 tests anteriores se conservan como historia. El cierre
 actual tiene 36 tests, tres Jobs en clúster nuevo y revisión acotada del historial.
 Jose confirma que el enunciado ya está recogido en la spec; no se requiere
 una revisión adicional del PDF.
+
+## T13 · Dockerfiles para ambos workloads
+
+**Estado:** completada; alcance y decisiones indicados expresamente por el usuario.
+
+Añadir `Dockerfile.producer` y ejemplos de montajes runtime; conservar el
+Dockerfile Consumer y el comportamiento de Layer 1. Verificar suite, build,
+CLI, capas de imagen y smoke aislado sin regenerar claves, sobrescribir la
+demo ni publicar artefactos. Evidencia en el anexo T13 del informe 002.
+Resultado: 84 tests, build y ayuda CLI correctos; smoke sin red seguido de
+carga Consumer `(1, 384)`; nueve capas inspeccionadas sin datos prohibidos ni
+coincidencias con los secretos conocidos. El criterio de descarga en runtime
+se conserva en la CLI y está documentado; no se repitió una descarga de red.
 
 ## Orden y regla de finalización
 
