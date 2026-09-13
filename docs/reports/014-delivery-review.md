@@ -28,8 +28,8 @@ anónimo del evaluador; Notion no es una dependencia de la entrega.
 
 `docs/delivery/REPRODUCTION.md` es la guía pública de reproducción; distingue
 pruebas sin claves, pareja propia y pareja publicada con aprovisionamiento privado.
-`MESSAGE.md` es un borrador de envío y `STUDY.md` prepara el ensayo del candidato.
-No se enviaron mensajes a evaluadores ni se publicó ningún secreto.
+El material privado de envío y estudio fue retirado del repositorio antes de la
+revisión final. No se publicó ningún secreto.
 
 El usuario excluyó generar ZIP antes de cerrar esta revisión. Se entregan guías
 y referencia Git; no se generó ni verificó archivo ZIP ni checksum. La validación

@@ -280,12 +280,9 @@ logs dejarán de estar disponibles en Kubernetes: conservar evidencia antes.
 - La clave local/Secret persisten. El Consumer retira solo su temporal;
   `emptyDir` desaparece al retirar el Pod. No es borrado seguro ni RAM exclusiva.
 - AESGCM/TAR completos en RAM. Nonce aleatorio sin registro de colisiones.
-- `.gitignore` no es un escáner de secretos. Layer 2 está implementada y
-  verificada; Layer 3 solo llega hasta el recorrido sintético L3-05, sin
-  Consumer attested ni AES real.
-
-El ensayo personal de defensa requiere participación de Jose y no se da por
-terminado al pasar las pruebas automáticas.
+- `.gitignore` no es un escáner de secretos. Layers 2 y 3 están implementadas
+  y verificadas; la evidencia de cierre de Layer 3 queda registrada en los
+  informes 011–013.
 
 ## Revisión acotada del historial
 
