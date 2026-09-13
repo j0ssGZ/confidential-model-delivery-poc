@@ -23,7 +23,9 @@ Kubernetes Secret, YAML, imagen ni Git. El positivo termina con
 embedding_shape=(1, 384)` y salida 0. Los negativos reales prueban firma
 inválida antes de CDH, KBS 401 antes de GCM y AES de prueba errónea rechazada por
 GCM; se repitió el positivo tras cada uno. Imagen AMD64 por digest y manifiestos
-separados comprobados; la suite estaba en 138 tests antes del E2E. No se afirma
+separados comprobados; la suite final vuelve a pasar con 138 tests. La auditoría
+acotada de historial e imagen no encontró claves conocidas, modelos ni artefactos
+en las capas; sus marcadores genéricos fueron revisados. No se afirma
 protección frente a un host malicioso: `kata-qemu-coco-dev` usa evidencia Sample,
 no una TEE real. [Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md) y
 [E2E 012](docs/reports/012-layer3-e2e.md).

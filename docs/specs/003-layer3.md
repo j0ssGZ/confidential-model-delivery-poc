@@ -4,9 +4,11 @@ Estado: infraestructura CoCo, Trustee, proveedor CDH y Consumer separado
 comprobados. Tras revalidar el host después de reboot, el Consumer obtuvo por
 CDH la AES ya asociada al bundle firmado y cargó MiniLM desde Hugging Face en
 `kata-qemu-coco-dev`. Los negativos firma/CDH/GCM también se ejecutaron en el
-entorno real. Queda auditoría y cierre documental; no se declara aún el tag
-final. Ver la [decisión 007](../decisions/007-layer3-attestation.md) y el
-[informe 012](../reports/012-layer3-e2e.md).
+entorno real. La suite, build y auditoría acotada también se repitieron; queda
+sincronizar el cierre documental/Notion antes de declarar el tag final. Ver la
+[decisión 007](../decisions/007-layer3-attestation.md), el
+[informe 012](../reports/012-layer3-e2e.md) y la
+[auditoría 013](../reports/013-layer3-closure-audit.md).
 
 ## Objetivo
 
@@ -127,7 +129,7 @@ del workload. Ver las decisiones D3/D4 para la justificación y sus límites.
    historial, imágenes Layer 3 o logs observados; se documentan sus límites.
 10. README, spec, decisión, plan, tareas, informes y Notion están sincronizados.
 
-Resultado al 13-09-2026: criterios 1–7 satisfechos en el laboratorio. Trustee
+Resultado al 13-09-2026: criterios 1–9 satisfechos en el laboratorio. Trustee
 v0.21.0 se fijó al commit compatible declarado con CoCo 0.22.0. Tras reboot el
 nodo, RuntimeClass y servicios Trustee volvieron a `Ready`, mientras que el
 backend `emptyDir` de KBS perdió sus recursos, tal como predice D4; se restauró
@@ -139,11 +141,15 @@ vía CDH, GCM autenticado y embedding `(1, 384)`, sin Secret AES. El negativo de
 firma terminó antes de `key_requested`; el de recurso denegado produjo KBS 401
 antes de recuperar clave/GCM; y el recurso de prueba de 32 ceros produjo KBS 200
 pero falló GCM antes de extracción/carga. Cada negativo se siguió de un positivo
-restaurado. Los criterios 8–10 (suite final, auditoría y sincronización total)
-siguen abiertos. [Evidencias 008](../reports/008-layer3-runtime-smoke.md),
+restaurado. La suite final tiene 138 tests verdes y la reconstrucción/auditoría
+de la imagen no encontró AES, privada, modelo ni artefacto conocidos. Un único
+marcador del historial fue la literal de cabecera PEM usada por el validador; los
+cinco marcadores de imagen son dependencias/código ya revisados, no credenciales.
+El criterio 10 (sincronización total y tag condicionado) sigue abierto.
+[Evidencias 008](../reports/008-layer3-runtime-smoke.md),
 [009](../reports/009-layer3-trustee-synthetic.md),
 [011](../reports/011-layer3-cdh-image.md) y
-[012](../reports/012-layer3-e2e.md).
+[012](../reports/012-layer3-e2e.md), [013](../reports/013-layer3-closure-audit.md).
 
 ## Fuera de alcance
 

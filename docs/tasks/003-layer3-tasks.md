@@ -1,6 +1,7 @@
 # Tareas 003: Layer 3
 
-Estado: L3-06–L3-09 comprobadas; auditoría/cierre pendiente. [Spec](../specs/003-layer3.md),
+Estado: L3-06–L3-09 comprobadas; auditoría ejecutada, sincronización Notion/tag
+pendientes. [Spec](../specs/003-layer3.md),
 [decisión](../decisions/007-layer3-attestation.md) y
 [plan](../plans/003-layer3-plan.md).
 
@@ -25,8 +26,8 @@ Estado: L3-06–L3-09 comprobadas; auditoría/cierre pendiente. [Spec](../specs/
   sin Secret AES ni token Kubernetes, comprobados mediante el Job sintético.
 - [x] L3-09: positivo y negativos end-to-end desde Hub en CoCo; cada negativo
   falló en su frontera y fue seguido de un positivo restaurado.
-- [ ] L3-10: auditar, documentar, sincronizar Notion y cerrar la capa con evidencia
-  y tag, sin modificar los hitos anteriores.
+- [ ] L3-10: suite, build y auditoría terminados; falta sincronizar Notion y,
+  solo entonces, cerrar con evidencia/tag sin modificar hitos anteriores.
 
 D3/D4 cerradas; el Consumer integrado ya acredita infraestructura real. No se
 marcaron checks con simulaciones: L3-09 usa Jobs Kata y KBS reales. Evidencia del bootstrap en el
@@ -35,4 +36,5 @@ marcaron checks con simulaciones: L3-09 usa Jobs Kata y KBS reales. Evidencia de
 [informe 009](../reports/009-layer3-trustee-synthetic.md). Proveedor e imagen en
 el [informe 011](../reports/011-layer3-cdh-image.md) y el
 [informe 012](../reports/012-layer3-e2e.md). El reboot y la pérdida esperada del
-almacén efímero están comprobados; sigue pendiente L3-10.
+almacén efímero están comprobados. La [auditoría 013](../reports/013-layer3-closure-audit.md)
+cubre suite, historial e imagen; sigue pendiente el tramo Notion/tag de L3-10.
