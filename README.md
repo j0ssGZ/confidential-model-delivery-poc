@@ -5,14 +5,18 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 3 tiene el runtime CoCo comprobado en la rama `layer3`:
-[spec](docs/specs/003-layer3.md), [decisión pendiente](docs/decisions/007-layer3-attestation.md),
+Layer 3 tiene runtime CoCo y Trustee sintético comprobados en la rama `layer3`:
+[spec](docs/specs/003-layer3.md), [decisión parcialmente cerrada](docs/decisions/007-layer3-attestation.md),
 [plan](docs/plans/003-layer3-plan.md) y [tareas](docs/tasks/003-layer3-tasks.md).
 Parte de `layer2-complete`, conservará la firma y sustituirá la entrega directa
 de la AES al workload por CDH + Trustee KBS. La entrega de clave todavía no está
-implementada: falta elegir/probar Trustee y cerrar el contrato del Consumer y
-la política. `kata-qemu-coco-dev` permite ensayar ese protocolo sin proporcionar
-confidencialidad respaldada por una TEE real.
+implementada: falta cerrar el contrato del Consumer y los controles para la AES
+real. `kata-qemu-coco-dev` permite ensayar ese protocolo sin proporcionar
+confidencialidad respaldada por una TEE real. Trustee v0.21.0 está fijado al
+commit declarado compatible con CoCo 0.22.0; un recurso sintético pasó allow
+(KBS 200), deny (KBS 401) y allow restaurada desde Pods Kata. La AES real no se
+registró: antes deben cerrarse el contrato del Consumer y los controles de
+persistencia, transporte, administración y política.
 
 Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y
@@ -22,7 +26,8 @@ BusyBox fijado por digest terminó con salida 0 y `kata_smoke_ok=true`. Kernel
 guest 6.18.35 frente a host 5.15.0-191-generic. L3-04 está comprobada; falta
 validar un reinicio del host. [Runbook](k8s/layer3/README.md),
 [bootstrap 007](docs/reports/007-layer3-bootstrap.md) y
-[evidencia del runtime 008](docs/reports/008-layer3-runtime-smoke.md).
+[evidencia del runtime 008](docs/reports/008-layer3-runtime-smoke.md) y
+[Trustee sintético 009](docs/reports/009-layer3-trustee-synthetic.md).
 
 Layer 2 completada y verificada en la rama `layer2` y fijada por el tag anotado
 `layer2-complete` en `e9234b9`: [spec](docs/specs/002-layer2.md),
@@ -254,7 +259,8 @@ logs dejarán de estar disponibles en Kubernetes: conservar evidencia antes.
   `emptyDir` desaparece al retirar el Pod. No es borrado seguro ni RAM exclusiva.
 - AESGCM/TAR completos en RAM. Nonce aleatorio sin registro de colisiones.
 - `.gitignore` no es un escáner de secretos. Layer 2 está implementada y
-  verificada; Layer 3 no está implementada.
+  verificada; Layer 3 solo llega hasta el recorrido sintético L3-05, sin
+  Consumer attested ni AES real.
 
 El ensayo personal de defensa requiere participación de Jose y no se da por
 terminado al pasar las pruebas automáticas.

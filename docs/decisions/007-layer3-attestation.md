@@ -1,6 +1,7 @@
 # Decisión 007: entorno y contrato de attestation de Layer 3
 
-Estado: D1 comprobada el 13-09-2026; D2 parcialmente validada; D3–D4 pendientes.
+Estado: D1–D2 comprobadas el 13-09-2026; D3 pendiente; D4 aprobada para el
+ensayo sintético y pendiente para la AES real.
 El código de [Layer 3](../specs/003-layer3.md) continúa bloqueado.
 
 ## Hechos confirmados
@@ -41,12 +42,23 @@ la pareja únicamente después de arrancar el Pod mínimo y completar una petici
 de recurso de prueba. Si falla, se elige una matriz documentada por una release
 de CoCo; no se mezclan fragmentos del tutorial 0.10.0 con APIs actuales.
 
-**Resultado parcial:** Kubernetes/kubeadm/kubelet/kubectl 1.36.4 fijados,
+**Resultado:** Kubernetes/kubeadm/kubelet/kubectl 1.36.4 fijados,
 containerd 2.2.1 activo con `SystemdCgroup=true`, Helm 3.18.6 verificado por
 checksum, Flannel 0.28.8 y CoCo chart 0.22.0 con digest registrado. El DaemonSet
 Kata 4.0.0 terminó y el Pod mínimo con `kata-qemu-coco-dev` pasó (salida 0,
-kernel guest 6.18.35). Falta elegir/probar Trustee. Dos ensayos, el segundo
-fijado por digest de BusyBox, están en el [informe 008](../reports/008-layer3-runtime-smoke.md).
+kernel guest 6.18.35). Dos ensayos, el segundo fijado por digest de BusyBox,
+están en el [informe 008](../reports/008-layer3-runtime-smoke.md).
+
+**Trustee aprobado para L3-05:** release `v0.21.0`, commit
+`258ea4acb7b9bd865fce5c63a539f2120dba8298`, que la release declara como la
+versión usada con CoCo 0.22.0. KBS, AS y RVPS usan los tags x86_64 de ese commit;
+el cliente `sample_only` usa el mismo commit y el manifiesto OCI
+`sha256:429be62c527e766a9854f9dac37f878010069c4aa6745d3d555d2bf393b9e82e`.
+El chart contenido en esa release conserva metadatos `trustee-0.18.0`/
+`appVersion: 0.18.0`; no se interpretó ese número como otra matriz: se instaló
+el chart del checkout exacto y se fijaron las tres imágenes al commit de la
+release. El recorrido allow/deny está en el
+[informe 009](../reports/009-layer3-trustee-synthetic.md).
 
 ## D3 — Contrato del Consumer
 
@@ -67,8 +79,14 @@ no versionado y política mínima que autorice la evidencia `sample` requerida p
 `coco-dev`. Añadir un caso denegatorio. La política permisiva solo prueba el
 recorrido; no se describirá como control respaldado por hardware.
 
-Pendiente: confirmar la sintaxis exacta de la release elegida y si Trustee vive
-en el mismo clúster o en un host/namespace separado accesible desde la VM Kata.
+**Decisión para el ensayo sintético:** Trustee vive en el mismo clúster, en el
+namespace separado `coco-trustee`, y usa LocalFs efímero y las identidades demo
+generadas por el chart. El recurso no secreto es `default/test/l3-synthetic`.
+Se prueban las políticas `allow_all.rego` y `deny_all.rego` de la release, y se
+restaura allow al terminar. Esta decisión solo habilita L3-05; antes de registrar
+la AES real se revisarán persistencia, TLS, identidad administrativa y política
+mínima ligada al workload como parte de D4. El warning observado sobre
+`audience` de trusted issuers también debe resolverse antes de ese paso.
 
 ## Respuesta oral defendible
 

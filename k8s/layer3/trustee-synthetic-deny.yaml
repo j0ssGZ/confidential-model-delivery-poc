@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: trustee-synthetic-deny-
+  namespace: secure-ai-layer3
+  labels:
+    app: trustee-synthetic-smoke
+    case: deny
+  annotations:
+    io.containerd.cri.runtime-handler: kata-qemu-coco-dev
+    io.katacontainers.config.hypervisor.kernel_params: "agent.aa_kbc_params=cc_kbc::http://__KBS_IP__:8080"
+spec:
+  runtimeClassName: kata-qemu-coco-dev
+  restartPolicy: Never
+  automountServiceAccountToken: false
+  activeDeadlineSeconds: 300
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+  containers:
+    - name: verifier
+      image: docker.io/library/busybox:1.37.0@sha256:9db7b59979c38555a39def84a31fb98b5296952f9e3afd4f6f11f05b07adfab0
+      imagePullPolicy: IfNotPresent
+      command: ["/bin/sh", "-ec"]
+      args:
+        - |
+          if output="$(wget -qO- http://127.0.0.1:8006/cdh/resource/default/test/l3-synthetic 2>&1)"; then
+            echo trustee_deny_ok=false
+            exit 1
+          fi
+          echo "$output"
+          echo trustee_deny_ok=true
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]

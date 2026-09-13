@@ -1,7 +1,8 @@
 # Plan 003: Layer 3
 
-Estado: host, Kubernetes y runtime CoCo con Pod mínimo comprobados (L3-04).
-El código del Consumer continúa bloqueado por D2–D4 de la
+Estado: host, Kubernetes, runtime CoCo y Trustee sintético comprobados
+(L3-05). El código del Consumer continúa bloqueado por D3 y por el cierre de D4
+para la AES real en la
 [decisión 007](../decisions/007-layer3-attestation.md). Contrato en la
 [spec](../specs/003-layer3.md).
 
@@ -33,6 +34,9 @@ Cada fase debe terminar con validación proporcional y un commit atómico
 publicado en `layer3`. Los fallos de infraestructura no se ocultarán con mocks:
 las pruebas unitarias validan el código; el criterio end-to-end exige el PC CoCo.
 
-Checkpoint 13-09-2026: fase 1 completada para host/Kubernetes; fase 2 completada
-con DaemonSet listo y Pod mínimo exitoso. La prueba no incluyó reinicio del
-host. Siguiente fase: fijar Trustee y ensayar un recurso sintético desde CoCo.
+Checkpoint 13-09-2026: fases 1–3 completadas. Trustee v0.21.0 está fijado al
+commit compatible con CoCo 0.22.0 y el recurso sintético pasó allow/deny desde
+Pods Kata, incluida la decisión HTTP 200/401 observada en KBS y la restauración
+de allow. La prueba no incluyó reinicio del host ni una TEE real. Siguiente fase:
+cerrar D3 y los controles D4 exigidos antes de usar la AES real; solo después
+puede comenzar el proveedor CDH.

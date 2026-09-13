@@ -1,9 +1,9 @@
 # Layer 3: liberación de clave condicionada a attestation
 
-Estado: infraestructura CoCo comprobada hasta L3-04: host, Kubernetes,
-DaemonSet y Pod mínimo `kata-qemu-coco-dev`. El código del Consumer no puede
-entrar en implementación hasta
-resolver D2–D4 en la
+Estado: infraestructura CoCo comprobada hasta L3-05: runtime y Trustee fijados,
+con recurso sintético autorizado y denegado desde Pods
+`kata-qemu-coco-dev`. El código del Consumer no puede entrar en implementación
+hasta resolver D3 y cerrar D4 para la AES real en la
 [decisión 007](../decisions/007-layer3-attestation.md).
 
 ## Objetivo
@@ -117,10 +117,13 @@ seguridad del modelo y no añade por sí sola protección antirrollback.
    historial, imágenes Layer 3 o logs observados; se documentan sus límites.
 10. README, spec, decisión, plan, tareas, informes y Notion están sincronizados.
 
-Resultado parcial del 13-09-2026: criterios 1–2 satisfechos, con Pod terminado
-en salida 0 y kernel guest distinto del host. El criterio 3 (Trustee) y los
-recorridos de clave/Consumer siguen pendientes. La persistencia tras reinicio
-del host todavía no se ha verificado. [Evidencia 008](../reports/008-layer3-runtime-smoke.md).
+Resultado parcial del 13-09-2026: criterios 1–3 satisfechos. Trustee v0.21.0 se
+fijó al commit compatible declarado con CoCo 0.22.0. Un recurso sintético no
+secreto obtuvo HTTP 200 bajo `allow_all.rego` y HTTP 401 bajo `deny_all.rego`
+desde Pods `kata-qemu-coco-dev`; la política allow quedó restaurada. No se usó
+la AES real. Los criterios 4–10 y la persistencia tras reinicio siguen
+pendientes. [Evidencia 008](../reports/008-layer3-runtime-smoke.md) y
+[evidencia 009](../reports/009-layer3-trustee-synthetic.md).
 
 ## Fuera de alcance
 
@@ -140,3 +143,5 @@ del host todavía no se ha verificado. [Evidencia 008](../reports/008-layer3-run
 - [Plan](../plans/003-layer3-plan.md) y [tareas](../tasks/003-layer3-tasks.md).
 - [Bootstrap del laboratorio](../reports/007-layer3-bootstrap.md).
 - [Runbook y smoke CoCo](../../k8s/layer3/README.md).
+- [Instalación oficial de Trustee con Helm](https://confidentialcontainers.org/docs/attestation/installation/helm/).
+- [Acceso a recursos mediante CDH](https://confidentialcontainers.org/docs/features/get-resource/).
