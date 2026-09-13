@@ -3,13 +3,11 @@
 Challenge de Capacity Secure AI. El repositorio sigue Specification-Driven
 Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
-**Para evaluar la entrega:** [guía del evaluador](docs/delivery/README.md),
-[reproducción](docs/delivery/REPRODUCTION.md) y
-[resumen para enviar](docs/delivery/MESSAGE.md). La entrega está preparada en
-GitHub con documentación de las tres capas; no incluye claves, modelos ni
-credenciales. El ZIP queda excluido de esta preparación por petición del autor.
-El código está fijado en `layer3-complete` (`b0fb7b6`); la revisión de entrega
-añade documentación sin mover ese hito. `main` conserva Layer 1 canónica.
+**Para evaluar la entrega:** consulta la
+[guía de reproducción](docs/delivery/REPRODUCTION.md). La entrega está preparada
+en GitHub con documentación de las tres capas; no incluye claves, modelos ni
+credenciales. El código verificado está fijado en `layer3-complete` (`b0fb7b6`);
+`main` conserva Layer 1 canónica.
 
 ## Estado
 

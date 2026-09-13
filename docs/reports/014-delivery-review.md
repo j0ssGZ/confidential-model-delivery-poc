@@ -26,7 +26,7 @@ anónimo del evaluador; Notion no es una dependencia de la entrega.
 
 ## Paquete y reproducción
 
-`docs/delivery/README.md` es la entrada del evaluador; `REPRODUCTION.md` distingue
+`docs/delivery/REPRODUCTION.md` es la guía pública de reproducción; distingue
 pruebas sin claves, pareja propia y pareja publicada con aprovisionamiento privado.
 `MESSAGE.md` es un borrador de envío y `STUDY.md` prepara el ensayo del candidato.
 No se enviaron mensajes a evaluadores ni se publicó ningún secreto.
