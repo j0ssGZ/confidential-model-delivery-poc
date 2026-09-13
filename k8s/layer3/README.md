@@ -1,8 +1,8 @@
 # Layer 3: runtime CoCo y Trustee sintético
 
 Estado: L3-06–L3-09 comprobadas: Consumer attested E2E desde Hub, clave por CDH
-y positivo/negativos en Kata. L3-10 (auditoría/cierre) sigue pendiente; no crear
-el tag final todavía.
+y positivo/negativos en Kata. L3-10 se cerró en `layer3-complete` (`b0fb7b6`).
+Esta revisión posterior mejora documentación de reproducción y entrega.
 Ejecutar en el servidor Ubuntu con su kubeconfig, desde un checkout de `layer3`.
 No usar los contextos kind de Layer 1/2 para este ensayo.
 
@@ -214,7 +214,7 @@ actuales. El verificador conserva logs saneados, código de salida, RuntimeClass
 ausencia de Secret AES y el acceso KBS:
 
 ```sh
-for case in positive tampered-signature denied wrong-aes positive; do
+for case in positive tampered-signature positive denied positive wrong-aes positive; do
   job=$(python3 scripts/layer3_jobs.py --case "$case" --image "$layer3_image" \
     --kbs-ip "$layer3_kbs_ip" | kubectl create -f - -o name)
   job=${job#job.batch/}
@@ -228,7 +228,7 @@ key_retrieved=true model_loaded=true embedding_shape=(1, 384)`; firma manipulada
 termina con salida 2 sin etapas CDH; `denied` llega a `key_requested` y KBS
 registra 401, sin GCM; `wrong-aes` llega a `key_retrieved`, KBS registra 200 y
 GCM rechaza antes de extracción. Repetir positivo demuestra la restauración del
-estado. No crear `layer3-complete` hasta completar L3-10.
+estado. `layer3-complete` conserva el checkpoint técnico ya publicado.
 
 ## Alcance
 

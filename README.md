@@ -3,6 +3,14 @@
 Challenge de Capacity Secure AI. El repositorio sigue Specification-Driven
 Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
+**Para evaluar la entrega:** [guía del evaluador](docs/delivery/README.md),
+[reproducción](docs/delivery/REPRODUCTION.md) y
+[resumen para enviar](docs/delivery/MESSAGE.md). La entrega está preparada en
+GitHub con documentación de las tres capas; no incluye claves, modelos ni
+credenciales. El ZIP queda excluido de esta preparación por petición del autor.
+El código está fijado en `layer3-complete` (`b0fb7b6`); la revisión de entrega
+añade documentación sin mover ese hito. `main` conserva Layer 1 canónica.
+
 ## Estado
 
 Layer 3 tiene runtime CoCo, Trustee y el recorrido end-to-end comprobados en la rama `layer3`:
@@ -28,7 +36,7 @@ acotada de historial e imagen no encontró claves conocidas, modelos ni artefact
 en las capas; sus marcadores genéricos fueron revisados. No se afirma
 protección frente a un host malicioso: `kata-qemu-coco-dev` usa evidencia Sample,
 no una TEE real. Notion principal, Layer 3 y presentación fueron releídos y
-sincronizados; el tag anotado se crea únicamente desde el árbol limpio de cierre.
+sincronizados; el tag anotado `layer3-complete` fue publicado en `b0fb7b6`.
 [Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md),
 [E2E 012](docs/reports/012-layer3-e2e.md) y
 [auditoría 013](docs/reports/013-layer3-closure-audit.md).
@@ -38,8 +46,8 @@ Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 Flannel 0.28.8. CoCo chart 0.22.0 terminó de instalar Kata 4.0.0; nodo `Ready`
 y DaemonSet `1/1 Running`. Un Pod mínimo con `kata-qemu-coco-dev`, UID 10001 y
 BusyBox fijado por digest terminó con salida 0 y `kata_smoke_ok=true`. Kernel
-guest 6.18.35 frente a host 5.15.0-191-generic. L3-04 está comprobada; falta
-validar un reinicio del host. [Runbook](k8s/layer3/README.md),
+guest 6.18.35 frente a host 5.15.0-191-generic. El reinicio se validó después:
+servicios recuperados y recursos KBS efímeros reaprovistos. [Runbook](k8s/layer3/README.md),
 [bootstrap 007](docs/reports/007-layer3-bootstrap.md) y
 [evidencia del runtime 008](docs/reports/008-layer3-runtime-smoke.md) y
 [Trustee sintético 009](docs/reports/009-layer3-trustee-synthetic.md).
@@ -85,6 +93,7 @@ Todos los comandos siguientes se ejecutan desde la raíz del repositorio.
 ```sh
 git clone https://github.com/j0ssGZ/confidential-model-delivery-poc.git
 cd confidential-model-delivery-poc
+git switch layer3
 uv sync --locked
 uv run pytest -q
 ```

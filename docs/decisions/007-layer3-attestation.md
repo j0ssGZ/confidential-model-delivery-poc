@@ -3,7 +3,8 @@
 Estado: D1–D4 cerradas para la PoC el 13-09-2026. Audience y política acotada
 verificadas en Trustee real. Tras revalidar el reinicio, el Consumer recuperó
 por CDH la AES existente asociada al bundle firmado y completó el E2E. Esto no
-cambia los límites de `coco-dev` ni implica cierre/auditoría final.
+cambia los límites de `coco-dev`. La auditoría posterior consta en el informe
+013; el hito técnico está fijado en `layer3-complete` (`b0fb7b6`).
 
 ## Hechos confirmados
 
