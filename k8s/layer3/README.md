@@ -1,7 +1,8 @@
 # Layer 3: runtime CoCo y Trustee sintético
 
-Estado: L3-06 real e imagen/manifiestos L3-08 comprobados; Consumer attested con
-138 tests de suite, pendiente E2E y todavía sin AES real en KBS.
+Estado: L3-06–L3-09 comprobadas: Consumer attested E2E desde Hub, clave por CDH
+y positivo/negativos en Kata. L3-10 (auditoría/cierre) sigue pendiente; no crear
+el tag final todavía.
 Ejecutar en el servidor Ubuntu con su kubeconfig, desde un checkout de `layer3`.
 No usar los contextos kind de Layer 1/2 para este ensayo.
 
@@ -154,7 +155,7 @@ La definición JSON es una plantilla, no se aplica directamente. El renderer
 exige imagen por digest e IPv4 interna de KBS, y genera Jobs nuevos. El caso
 `synthetic` utiliza exclusivamente la fixture pública `default/test/wrong-aes`
 de 32 ceros, previamente registrada con `layer3_trustee_admin.py --fixture`.
-No aprovisionar la AES real hasta demostrar ese caso.
+La fixture sintética debe demostrarse antes de aprovisionar la AES real.
 
 ```sh
 layer3_image=docker.io/jfanjul/confidential-model-delivery-consumer-attested@sha256:5ec1d732edfb5cb7a2efcbcdfadbba4f310759f1cd1d0ca309d64f36ce2238b6
@@ -193,15 +194,41 @@ Resultado comprobado: `attested-synthetic-4fmlj` arrancó con estos ajustes,
 imprimió `cdh_python_synthetic_ok=true`, KBS respondió 200 y el Pod terminó con
 salida 0. [Evidencia 011](../../docs/reports/011-layer3-cdh-image.md).
 
-### Después del reinicio anunciado
+### Reboot y recorrido E2E comprobados
 
-No se ha reiniciado el host desde el agente ni verificado todavía el reboot.
-Kubelet y containerd están habilitados en systemd, pero eso no prueba que todos
-los recursos persistan. Volver a comprobar nodo, DaemonSet, RuntimeClass,
-Trustee, audience y política. LocalFs/emptyDir puede perder los recursos del
-KBS si se reemplaza su Pod. Reaprovisionar solo fixtures sintéticas primero,
-repetir CDH y no regenerar identidades existentes. La AES original permanece
-local y aún no está en Trustee. No crear `layer3-complete` en este checkpoint.
+El reboot del host fue comprobado: nodo, RuntimeClass y despliegues Trustee
+volvieron a `Ready`, pero el repositorio LocalFs de KBS respaldado por `emptyDir`
+perdió los recursos. Es el comportamiento esperado de D4, no una garantía de
+persistencia. Se restauró primero la fixture sintética y se repitió CDH.
+
+Solo entonces el operador registró, mediante `layer3_trustee_admin.py --key-file`
+y el cliente KBS fijado, los 32 bytes ya asociados al bundle firmado bajo
+`default/key/minilm-l6-v2`. El archivo siguió siendo privado: no se mostró ni se
+copió a YAML, Secret Kubernetes, imagen, Git ni logs. No se regeneró ni
+republicó ningún artefacto. El procedimiento debe verificar el emparejamiento
+bundle/AES localmente antes de escribir el recurso; una clave válida de otro
+bundle provoca el negativo GCM, no debe reinterpretarse como fallo de CDH.
+
+Renderizar y verificar un Job por caso, siempre con la imagen digest y ClusterIP
+actuales. El verificador conserva logs saneados, código de salida, RuntimeClass,
+ausencia de Secret AES y el acceso KBS:
+
+```sh
+for case in positive tampered-signature denied wrong-aes positive; do
+  job=$(python3 scripts/layer3_jobs.py --case "$case" --image "$layer3_image" \
+    --kbs-ip "$layer3_kbs_ip" | kubectl create -f - -o name)
+  job=${job#job.batch/}
+  python3 scripts/layer3_verify_job.py --job "$job" --case "$case" \
+    --evidence-dir /tmp/cmdp-l3-evidence
+done
+```
+
+Esperado: `positive` acaba con salida 0 y `signature_verified=true
+key_retrieved=true model_loaded=true embedding_shape=(1, 384)`; firma manipulada
+termina con salida 2 sin etapas CDH; `denied` llega a `key_requested` y KBS
+registra 401, sin GCM; `wrong-aes` llega a `key_retrieved`, KBS registra 200 y
+GCM rechaza antes de extracción. Repetir positivo demuestra la restauración del
+estado. No crear `layer3-complete` hasta completar L3-10.
 
 ## Alcance
 

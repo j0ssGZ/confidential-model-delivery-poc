@@ -1,12 +1,12 @@
 # Layer 3: liberación de clave condicionada a attestation
 
-Estado: infraestructura CoCo comprobada hasta L3-05: runtime y Trustee fijados,
-con recurso sintético autorizado y denegado desde Pods
-`kata-qemu-coco-dev`. D3/D4 cerradas y Consumer separado probado unitariamente;
-L3-06 ya recuperó una fixture pública de 32 bytes con ese proveedor dentro de
-Kata (salida 0/KBS 200). La AES real espera revalidar el reboot anunciado por el
-operador y comenzar E2E, según la
-[decisión 007](../decisions/007-layer3-attestation.md).
+Estado: infraestructura CoCo, Trustee, proveedor CDH y Consumer separado
+comprobados. Tras revalidar el host después de reboot, el Consumer obtuvo por
+CDH la AES ya asociada al bundle firmado y cargó MiniLM desde Hugging Face en
+`kata-qemu-coco-dev`. Los negativos firma/CDH/GCM también se ejecutaron en el
+entorno real. Queda auditoría y cierre documental; no se declara aún el tag
+final. Ver la [decisión 007](../decisions/007-layer3-attestation.md) y el
+[informe 012](../reports/012-layer3-e2e.md).
 
 ## Objetivo
 
@@ -127,22 +127,23 @@ del workload. Ver las decisiones D3/D4 para la justificación y sus límites.
    historial, imágenes Layer 3 o logs observados; se documentan sus límites.
 10. README, spec, decisión, plan, tareas, informes y Notion están sincronizados.
 
-Resultado parcial del 13-09-2026: criterios 1–3 satisfechos. Trustee v0.21.0 se
-fijó al commit compatible declarado con CoCo 0.22.0. Un recurso sintético no
-secreto obtuvo HTTP 200 bajo `allow_all.rego` y HTTP 401 bajo `deny_all.rego`
-desde Pods `kata-qemu-coco-dev`; la política allow quedó restaurada. No se usó
-la AES real. Los criterios 4–10 y la persistencia tras reinicio siguen
-pendientes. [Evidencia 008](../reports/008-layer3-runtime-smoke.md) y
-[evidencia 009](../reports/009-layer3-trustee-synthetic.md).
+Resultado al 13-09-2026: criterios 1–7 satisfechos en el laboratorio. Trustee
+v0.21.0 se fijó al commit compatible declarado con CoCo 0.22.0. Tras reboot el
+nodo, RuntimeClass y servicios Trustee volvieron a `Ready`, mientras que el
+backend `emptyDir` de KBS perdió sus recursos, tal como predice D4; se restauró
+la fixture sintética y, solo tras ello, el recurso AES existente que corresponde
+al bundle firmado. No se generó AES ni se republicó Hugging Face.
 
-Actualización L3-06/L3-08: `attested-synthetic-4fmlj` ejecutó la imagen AMD64
-por digest, sin AES Secret ni token Kubernetes, y recuperó la fixture de 32
-ceros vía CDH real. Suite de 138 tests. Los dos primeros intentos fallaron antes
-de Python por límites de arranque de Kata y kubelet; se preservaron y no cuentan
-como negativos de seguridad. Ver [informe 011](../reports/011-layer3-cdh-image.md).
-Los criterios del modelo E2E y auditoría final siguen abiertos. Se pausa el
-aprovisionamiento AES ante el reinicio anunciado del host; no se declara
-persistencia ni cierre Layer 3.
+`attested-positive-5xx5n` terminó con salida 0, firma validada, clave recuperada
+vía CDH, GCM autenticado y embedding `(1, 384)`, sin Secret AES. El negativo de
+firma terminó antes de `key_requested`; el de recurso denegado produjo KBS 401
+antes de recuperar clave/GCM; y el recurso de prueba de 32 ceros produjo KBS 200
+pero falló GCM antes de extracción/carga. Cada negativo se siguió de un positivo
+restaurado. Los criterios 8–10 (suite final, auditoría y sincronización total)
+siguen abiertos. [Evidencias 008](../reports/008-layer3-runtime-smoke.md),
+[009](../reports/009-layer3-trustee-synthetic.md),
+[011](../reports/011-layer3-cdh-image.md) y
+[012](../reports/012-layer3-e2e.md).
 
 ## Fuera de alcance
 

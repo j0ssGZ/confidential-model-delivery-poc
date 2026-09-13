@@ -1,6 +1,6 @@
 # Tareas 003: Layer 3
 
-Estado: L3-06 y artefactos L3-08 comprobados; E2E del modelo pendiente. [Spec](../specs/003-layer3.md),
+Estado: L3-06–L3-09 comprobadas; auditoría/cierre pendiente. [Spec](../specs/003-layer3.md),
 [decisión](../decisions/007-layer3-attestation.md) y
 [plan](../plans/003-layer3-plan.md).
 
@@ -19,19 +19,20 @@ Estado: L3-06 y artefactos L3-08 comprobados; E2E del modelo pendiente. [Spec](.
   denegado (KBS 401) desde Pods Kata, con allow restaurada al terminar.
 - [x] L3-06: proveedor Python CDH ejecutado dentro de Kata con fixture pública
   de 32 bytes; salida 0 y KBS 200, Job `attested-synthetic-4fmlj`.
-- [ ] L3-07: Consumer implementado con orden firma → clave → GCM probado;
-  138 tests de suite pasan. Pendiente integración real con el modelo.
+- [x] L3-07: Consumer conserva el orden firma → clave → GCM; integración real
+  con el modelo comprobada desde la revisión Hub fijada.
 - [x] L3-08: imagen AMD64 publicada por digest y manifiestos separados,
   sin Secret AES ni token Kubernetes, comprobados mediante el Job sintético.
-- [ ] L3-09: ejecutar positivo y negativos end-to-end desde Hub en CoCo.
+- [x] L3-09: positivo y negativos end-to-end desde Hub en CoCo; cada negativo
+  falló en su frontera y fue seguido de un positivo restaurado.
 - [ ] L3-10: auditar, documentar, sincronizar Notion y cerrar la capa con evidencia
   y tag, sin modificar los hitos anteriores.
 
-D3/D4 cerradas; el código tiene verificación unitaria. Todavía no acredita el
-Consumer integrado. No marcar checks por tests simulados si el
-criterio exige infraestructura real. Evidencia del bootstrap en el
+D3/D4 cerradas; el Consumer integrado ya acredita infraestructura real. No se
+marcaron checks con simulaciones: L3-09 usa Jobs Kata y KBS reales. Evidencia del bootstrap en el
 [informe 007](../reports/007-layer3-bootstrap.md), y runtime comprobado en el
 [informe 008](../reports/008-layer3-runtime-smoke.md); Trustee sintético en el
 [informe 009](../reports/009-layer3-trustee-synthetic.md). Proveedor e imagen en
-el [informe 011](../reports/011-layer3-cdh-image.md). Reinicio del host anunciado
-por el operador: revalidarlo antes de aprovisionar la AES original.
+el [informe 011](../reports/011-layer3-cdh-image.md) y el
+[informe 012](../reports/012-layer3-e2e.md). El reboot y la pérdida esperada del
+almacén efímero están comprobados; sigue pendiente L3-10.

@@ -5,23 +5,28 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 3 tiene runtime CoCo y Trustee sintético comprobados en la rama `layer3`:
+Layer 3 tiene runtime CoCo, Trustee y el recorrido end-to-end comprobados en la rama `layer3`:
 [spec](docs/specs/003-layer3.md), [decisiones cerradas para PoC](docs/decisions/007-layer3-attestation.md),
 [plan](docs/plans/003-layer3-plan.md) y [tareas](docs/tasks/003-layer3-tasks.md).
-Parte de `layer2-complete`, conservará la firma y sustituirá la entrega directa
-de la AES al workload por CDH + Trustee KBS. La entrega de clave todavía no está
-verificada end-to-end: Consumer y proveedor CDH ya tienen pruebas unitarias;
-D3/D4 están cerradas con audience y política Sample acotada comprobadas.
+Parte de `layer2-complete`, conserva la firma y sustituye la entrega directa
+de la AES al workload por CDH + Trustee KBS. El Consumer verifica primero la
+firma Ed25519 del bundle de Hugging Face, después recupera la AES por CDH y solo
+entonces autentica, extrae y carga MiniLM. D3/D4 están cerradas con audience y
+política Sample acotada comprobadas.
 `kata-qemu-coco-dev` permite ensayar ese protocolo sin proporcionar
 confidencialidad respaldada por una TEE real. Trustee v0.21.0 está fijado al
-commit declarado compatible con CoCo 0.22.0; un recurso sintético pasó allow
-(KBS 200), deny (KBS 401) y allow restaurada desde Pods Kata. La AES real no se
-registró todavía. **L3-06 comprobada:** el proveedor Python recuperó una fixture
-pública de 32 bytes dentro de Kata, con salida 0 y KBS 200. Imagen AMD64 por
-digest y manifiestos separados comprobados; 138 tests pasan. Se conserva el
-checkpoint antes del reinicio anunciado por el operador. Después: revalidar
-infraestructura, aprovisionar la AES original y ejecutar E2E positivo/negativos.
-[Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md).
+commit declarado compatible con CoCo 0.22.0. Tras el reboot del host, el
+recurso efímero se reaplicó de forma controlada y la AES ya asociada al bundle
+firmado se registró temporalmente en KBS bajo `default/key/minilm-l6-v2`, sin
+Kubernetes Secret, YAML, imagen ni Git. El positivo termina con
+`signature_verified=true key_retrieved=true model_loaded=true
+embedding_shape=(1, 384)` y salida 0. Los negativos reales prueban firma
+inválida antes de CDH, KBS 401 antes de GCM y AES de prueba errónea rechazada por
+GCM; se repitió el positivo tras cada uno. Imagen AMD64 por digest y manifiestos
+separados comprobados; la suite estaba en 138 tests antes del E2E. No se afirma
+protección frente a un host malicioso: `kata-qemu-coco-dev` usa evidencia Sample,
+no una TEE real. [Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md) y
+[E2E 012](docs/reports/012-layer3-e2e.md).
 
 Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y

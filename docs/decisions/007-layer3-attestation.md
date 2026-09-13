@@ -1,9 +1,9 @@
 # Decisión 007: entorno y contrato de attestation de Layer 3
 
 Estado: D1–D4 cerradas para la PoC el 13-09-2026. Audience y política acotada
-verificadas en Trustee real. El proveedor Python ya recuperó la fixture pública
-de 32 bytes dentro de Kata. La AES original espera revalidar el reinicio del
-host anunciado por el operador; todavía no se ha transferido a Trustee.
+verificadas en Trustee real. Tras revalidar el reinicio, el Consumer recuperó
+por CDH la AES existente asociada al bundle firmado y completó el E2E. Esto no
+cambia los límites de `coco-dev` ni implica cierre/auditoría final.
 
 ## Hechos confirmados
 
@@ -110,8 +110,11 @@ no se requiere PKI ni base de datos durable para demostrar la PoC. El operador
 aprovisiona mediante SSH y port-forward autenticado de Kubernetes, con token y
 AES en archivos privados temporales. Nunca se expone un NodePort/Ingress de KBS.
 El reinicio/reemplazo del Pod KBS puede perder recursos: el runbook exige volver
-a aprovisionar desde la AES original. No se afirma persistencia tras reboot sin
-ejecutarlo. Una migración con adversario de red/host necesita TLS y TEE reales.
+a aprovisionar desde la AES original. El reboot comprobado confirmó esta
+limitación: nodos y servicios volvieron a `Ready`, pero el repositorio KBS
+`emptyDir` quedó vacío y sus fixtures se reaplicaron. La AES existente se cargó
+después, por el canal administrativo local documentado y sin exponer su valor.
+Una migración con adversario de red/host necesita TLS y TEE reales.
 
 La política final deniega por defecto y exige plugin `resource`, query vacío,
 evidencia `sample` en `submods.cpu0.ear.veraison.annotated-evidence`, y una lista

@@ -1,10 +1,9 @@
 # Plan 003: Layer 3
 
-Estado: host, Kubernetes, runtime CoCo y Trustee sintético comprobados
-(L3-05). D3/D4 cerradas con audience y política acotada verificadas; proveedor
-y Consumer implementados y probados unitariamente, según la
-[decisión 007](../decisions/007-layer3-attestation.md). Contrato en la
-[spec](../specs/003-layer3.md).
+Estado: fases 1–7 comprobadas en CoCo real de laboratorio. D3/D4 están cerradas,
+el Consumer obtuvo la AES por CDH y pasó positivo/negativos E2E según la
+[decisión 007](../decisions/007-layer3-attestation.md). Falta únicamente la
+fase 8 de auditoría y cierre; contrato en la [spec](../specs/003-layer3.md).
 
 1. **Cerrar entorno y versiones.** Inspeccionar el PC Ubuntu sin mostrar datos
    sensibles, aprobar host y fijar Kubernetes/containerd/Helm/CoCo/Trustee.
@@ -34,17 +33,10 @@ Cada fase debe terminar con validación proporcional y un commit atómico
 publicado en `layer3`. Los fallos de infraestructura no se ocultarán con mocks:
 las pruebas unitarias validan el código; el criterio end-to-end exige el PC CoCo.
 
-Checkpoint 13-09-2026: fases 1–3 completadas. Trustee v0.21.0 está fijado al
-commit compatible con CoCo 0.22.0 y el recurso sintético pasó allow/deny desde
-Pods Kata, incluida la decisión HTTP 200/401 observada en KBS y la restauración
-de allow. La prueba no incluyó reinicio del host ni una TEE real. Siguiente fase:
-ejecutar el proveedor Python sintético en Kata, seguido de AES original y E2E.
-D3/D4 se cerraron: admin 200/401, política Sample acotada 200/401, suite 123 tests.
-
-Checkpoint posterior: proveedor Python comprobado en Kata con fixture de 32
-bytes, imagen por digest y manifiestos separados; suite 138 tests. Se ajustaron
-timeouts de creación guest con evidencia y backup, sin cambiar versiones.
-Antes de continuar se revalidará el reinicio que anunció el operador. No se
-aprovisionó la AES original ni se ejecutó aún el Consumer E2E con MiniLM.
-Siguiente: comprobar servicios/política/fixture tras reboot, recuperar el último
-checkpoint si es necesario, luego fases 7–8 con la AES original.
+Checkpoint E2E 13-09-2026: tras reboot, fases 1–7 completadas. Trustee v0.21.0
+siguió operativo y KBS confirmó que su LocalFs/`emptyDir` no persiste recursos;
+se restauró de forma controlada. El positivo final pasó después de cada negativo.
+Los límites de arranque de Kata/kubelet permanecen documentados y no cuentan
+como negativos de seguridad. Siguiente y última fase: auditoría final, suite,
+evidencia, documentación/Notion y tag solo si todos los criterios restantes
+pasan. No se usó TEE real.
