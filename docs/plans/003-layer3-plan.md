@@ -1,6 +1,7 @@
 # Plan 003: Layer 3
 
-Estado: preparado, implementación bloqueada por D1–D4 de la
+Estado: bootstrap del host y Kubernetes completado; instalación CoCo en curso.
+El código del Consumer continúa bloqueado por D2–D4 de la
 [decisión 007](../decisions/007-layer3-attestation.md). Contrato en la
 [spec](../specs/003-layer3.md).
 
@@ -27,3 +28,7 @@ Estado: preparado, implementación bloqueada por D1–D4 de la
 Cada fase debe terminar con validación proporcional y un commit atómico
 publicado en `layer3`. Los fallos de infraestructura no se ocultarán con mocks:
 las pruebas unitarias validan el código; el criterio end-to-end exige el PC CoCo.
+
+Checkpoint 13-09-2026: fase 1 completada para host/Kubernetes; fase 2 llega a
+release Helm creada y RuntimeClass presente. Tras el reinicio se comprueba el
+DaemonSet y se ejecuta el Pod mínimo antes de avanzar a Trustee.

@@ -1,7 +1,8 @@
 # Layer 3: liberación de clave condicionada a attestation
 
-Estado: borrador en aclaración. Esta capa parte de `layer2-complete` y no puede
-entrar en implementación hasta resolver D1–D4 en la
+Estado: borrador en aclaración. El bootstrap del host y Kubernetes está
+comprobado; el código del Consumer no puede entrar en implementación hasta
+resolver D2–D4 en la
 [decisión 007](../decisions/007-layer3-attestation.md).
 
 ## Objetivo
@@ -131,3 +132,4 @@ seguridad del modelo y no añade por sí sola protección antirrollback.
 - [Instalación de Trustee](https://confidentialcontainers.org/docs/attestation/installation/).
 - [Tutorial sin hardware confidencial](https://confidentialcontainers.org/blog/2024/12/03/confidential-containers-without-confidential-hardware/).
 - [Plan](../plans/003-layer3-plan.md) y [tareas](../tasks/003-layer3-tasks.md).
+- [Bootstrap del laboratorio](../reports/007-layer3-bootstrap.md).

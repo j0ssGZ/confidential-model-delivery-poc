@@ -14,6 +14,14 @@ instalación y el código están bloqueados hasta confirmar Ubuntu/KVM y fijar u
 matriz compatible de CoCo y Trustee. `kata-qemu-coco-dev` solo demostrará el
 protocolo de attestation, no confidencialidad respaldada por una TEE real.
 
+Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
+22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y
+Flannel 0.28.8. El nodo de un solo miembro llegó a `Ready`; CoCo chart 0.22.0
+quedó desplegado y creó `kata-qemu-coco-dev`, pero su DaemonSet aún descargaba
+`kata-deploy:4.0.0`. Tras el reinicio hay que comprobar que el instalador termina
+y arrancar un Pod mínimo antes de considerar CoCo operativo. Evidencia:
+[`informe 007`](docs/reports/007-layer3-bootstrap.md).
+
 Layer 2 completada y verificada en la rama `layer2` y fijada por el tag anotado
 `layer2-complete` en `e9234b9`: [spec](docs/specs/002-layer2.md),
 [plan](docs/plans/002-layer2-plan.md) y [tareas](docs/tasks/002-layer2-tasks.md).

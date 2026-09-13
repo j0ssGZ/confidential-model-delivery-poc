@@ -1,7 +1,7 @@
 # Decisión 007: entorno y contrato de attestation de Layer 3
 
-Estado: pendiente de aclaración. Las decisiones siguientes bloquean la
-implementación de [Layer 3](../specs/003-layer3.md).
+Estado: D1 comprobada el 13-09-2026; D2 parcialmente validada; D3–D4 pendientes.
+El código de [Layer 3](../specs/003-layer3.md) continúa bloqueado.
 
 ## Hechos confirmados
 
@@ -28,8 +28,10 @@ Alternativa: Ubuntu 24.04 LTS, solo si el checkpoint de compatibilidad del chart
 y `kata-qemu-coco-dev` pasa antes de programar el Consumer. Una VM anidada en el
 Mac aumenta el riesgo de bloqueo y no es el camino recomendado para la entrega.
 
-Pendiente de Jose: confirmar qué Ubuntu está instalado y facilitar las salidas
-saneadas de `uname -m`, versión del sistema y comprobación de `/dev/kvm`.
+**Resultado:** opción recomendada confirmada. `secure-ai-node` ejecuta Ubuntu
+22.04.5 LTS x86_64 en el PC Intel i5-4670K, con VT-x, módulos `kvm_intel`/`kvm`,
+`/dev/kvm`, 4 CPU, 7,7 GiB de RAM y 86 GiB libres. El usuario se añadió al grupo
+`kvm`; el nuevo grupo se aplicará tras volver a iniciar sesión.
 
 ## D2 — Combinación de versiones
 
@@ -39,8 +41,11 @@ la pareja únicamente después de arrancar el Pod mínimo y completar una petici
 de recurso de prueba. Si falla, se elige una matriz documentada por una release
 de CoCo; no se mezclan fragmentos del tutorial 0.10.0 con APIs actuales.
 
-Pendiente: registrar Kubernetes, containerd, Helm, CoCo, Kata, Trustee y protocolo
-KBS que realmente se ejecuten.
+**Resultado parcial:** Kubernetes/kubeadm/kubelet/kubectl 1.36.4 fijados,
+containerd 2.2.1 activo con `SystemdCgroup=true`, Helm 3.18.6 verificado por
+checksum, Flannel 0.28.8 y CoCo chart 0.22.0 con digest registrado. El nodo llegó
+a `Ready` y se creó `kata-qemu-coco-dev`. Falta que termine el DaemonSet
+`kata-as-coco-runtime`, arrancar un Pod mínimo y elegir/probar Trustee.
 
 ## D3 — Contrato del Consumer
 

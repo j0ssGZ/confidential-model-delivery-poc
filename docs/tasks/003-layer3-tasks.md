@@ -8,9 +8,12 @@ Estado: aclaración. [Spec](../specs/003-layer3.md),
   la rama `layer3` desde ese commit.
 - [x] L3-01: contrastar el tutorial histórico con las rutas oficiales actuales;
   elegir Helm como instalación candidata y registrar límites de `coco-dev`.
-- [ ] L3-02: aclarar D1–D4 y aprobar host, versiones, contrato y política.
-- [ ] L3-03: verificar Ubuntu x86_64, KVM, containerd, Kubernetes y Helm.
-- [ ] L3-04: instalar CoCo fijado y arrancar Pod mínimo con
+- [ ] L3-02: D1 aprobada con evidencia y D2 parcialmente validada; falta aprobar
+  Trustee, contrato del Consumer y política.
+- [x] L3-03: verificar Ubuntu x86_64, KVM, containerd, Kubernetes y Helm; clúster
+  kubeadm de un nodo y CNI fijada llegaron a `Ready`.
+- [ ] L3-04: CoCo chart 0.22.0 desplegado y RuntimeClass creada; falta esperar el
+  DaemonSet y arrancar un Pod mínimo con
   `kata-qemu-coco-dev`.
 - [ ] L3-05: desplegar Trustee fijado y demostrar recurso sintético autorizado y
   denegado desde una VM Kata.
@@ -22,6 +25,7 @@ Estado: aclaración. [Spec](../specs/003-layer3.md),
 - [ ] L3-10: auditar, documentar, sincronizar Notion y cerrar la capa con evidencia
   y tag, sin modificar los hitos anteriores.
 
-L3-02 bloquea L3-03 en adelante. L3-04 bloquea Trustee; L3-05 bloquea afirmar que
-el Consumer integrado es reproducible. No marcar checks por tests simulados si
-el criterio exige infraestructura real.
+D2–D4 bloquean el código. L3-04 bloquea Trustee; L3-05 bloquea afirmar que el
+Consumer integrado es reproducible. No marcar checks por tests simulados si el
+criterio exige infraestructura real. Evidencia del bootstrap en el
+[informe 007](../reports/007-layer3-bootstrap.md).
