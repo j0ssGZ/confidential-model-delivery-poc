@@ -1,8 +1,8 @@
 # Decisión 007: entorno y contrato de attestation de Layer 3
 
-Estado: D1–D2 comprobadas el 13-09-2026; D3 pendiente; D4 aprobada para el
-ensayo sintético y pendiente para la AES real.
-El código de [Layer 3](../specs/003-layer3.md) continúa bloqueado.
+Estado: D1–D4 cerradas para la PoC el 13-09-2026. Audience y política acotada
+verificadas en Trustee real. El aprovisionamiento AES espera comprobar el nuevo
+proveedor Python dentro de Kata con la fixture pública de 32 bytes.
 
 ## Hechos confirmados
 
@@ -62,11 +62,25 @@ release. El recorrido allow/deny está en el
 
 ## D3 — Contrato del Consumer
 
-**Recomendación:** `cmdp-consumer-attested`, basado en el Consumer firmado. Sus
+**Decisión D3:** `cmdp-consumer-attested`, basado en el Consumer firmado. Sus
 entradas serán bundle/firma local o revisión Hub, pública Ed25519, workdir y un
 identificador de recurso CDH; no aceptará `--key-file`. Orden: verificar firma →
 pedir recurso → validar 32 bytes → GCM/extraer/cargar. Una firma inválida no debe
 provocar una petición de clave.
+
+El proveedor `retrieve_key(resource, timeout)` usa exclusivamente HTTPConnection
+a `127.0.0.1:8006/cdh/resource/<repositorio>/<tipo>/<identificador>`, sin proxies,
+redirecciones ni URL configurable. Los tres segmentos admiten letras, números,
+guiones y guiones bajos; no traversal ni query strings. Timeout finito positivo,
+respuesta HTTP 200, lectura acotada a 33 bytes y exactamente 32 bytes exigidos.
+No registra cuerpo, clave ni errores remotos. Una función callable pequeña
+permite instrumentar el proveedor en tests. La clave permanece en memoria de
+Python; no se escribe un archivo para reutilizar el Consumer Layer 1.
+
+Se reutilizan descarga firmada, validación Ed25519, GCM/TAR y carga local
+existentes. La nueva orquestación conserva una única instantánea de bytes y un
+temporal propio. Marcadores públicos de etapa permiten correlacionar los
+negativos; la salida final mantiene los campos de aceptación de la spec.
 
 Alternativa: adaptar el mismo `cmdp-consumer-signed` con dos proveedores de
 clave. Se descarta por defecto porque aumenta combinaciones y hace menos visible
@@ -87,6 +101,44 @@ restaura allow al terminar. Esta decisión solo habilita L3-05; antes de registr
 la AES real se revisarán persistencia, TLS, identidad administrativa y política
 mínima ligada al workload como parte de D4. El warning observado sobre
 `audience` de trusted issuers también debe resolverse antes de ese paso.
+
+**Decisión D4 para la entrega:** el usuario autorizó evaluar los controles según
+el challenge, manteniendo el host/clúster en la frontera de confianza. Se
+conservan HTTP interno ClusterIP, LocalFs/emptyDir e identidades del laboratorio;
+no se requiere PKI ni base de datos durable para demostrar la PoC. El operador
+aprovisiona mediante SSH y port-forward autenticado de Kubernetes, con token y
+AES en archivos privados temporales. Nunca se expone un NodePort/Ingress de KBS.
+El reinicio/reemplazo del Pod KBS puede perder recursos: el runbook exige volver
+a aprovisionar desde la AES original. No se afirma persistencia tras reboot sin
+ejecutarlo. Una migración con adversario de red/host necesita TLS y TEE reales.
+
+La política final deniega por defecto y exige plugin `resource`, query vacío,
+evidencia `sample` en `submods.cpu0.ear.veraison.annotated-evidence`, y una lista
+explícita de rutas: `default/key/minilm-l6-v2`, `default/test/l3-synthetic` y
+`default/test/wrong-aes`. Una ruta `default/test/denied` queda fuera de la lista.
+Esto acota recursos, pero Sample no autentica la identidad exclusiva de nuestro
+workload: cualquier cliente capaz de producir esa evidencia puede satisfacerla.
+No se atribuye aislamiento por identidad ni integridad del código a esta política.
+
+El warning de audience pertenece a **autenticación administrativa de KBS**, no
+a AS ni a la evidencia Sample. En `kbs/src/admin/authentication/bearer_jwt.rs`
+del commit fijado, un `audience` ausente omite esa comprobación aunque siga
+validando firma/issuer/rol. El chart genera `aud=KBS` pero omite `audience` en
+`identity_providers`; se añadirá `audience="KBS"` a la configuración pública.
+Se conservarán las identidades existentes y la evidencia antes de reiniciar
+solo KBS. Se comprobará admin válido y rechazo de un token con audience distinta,
+sin imprimir tokens ni claves. Esta corrección debe reaplicarse tras Helm si
+el chart vuelve a renderizar su configuración predeterminada.
+
+Verificación D4: admin válido HTTP 200 y otro token firmado por la misma identidad
+pero con `aud=cmdp-wrong-audience` HTTP 401. No aparece el warning de audience
+ausente. La política acotada pasó recurso sintético 200 y deny 401 en Kata;
+el script la restauró al terminar. Logs y datos anteriores se conservaron en
+un backup privado del operador antes de reiniciar únicamente el Deployment KBS.
+
+Fuentes: [políticas oficiales](https://confidentialcontainers.org/docs/attestation/policies/),
+[CDH](https://confidentialcontainers.org/docs/features/get-resource/) y código
+[bearer_jwt.rs fijado](https://github.com/confidential-containers/trustee/blob/258ea4acb7b9bd865fce5c63a539f2120dba8298/kbs/src/admin/authentication/bearer_jwt.rs).
 
 ## Respuesta oral defendible
 

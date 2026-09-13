@@ -1,8 +1,8 @@
 # Plan 003: Layer 3
 
 Estado: host, Kubernetes, runtime CoCo y Trustee sintético comprobados
-(L3-05). El código del Consumer continúa bloqueado por D3 y por el cierre de D4
-para la AES real en la
+(L3-05). D3/D4 cerradas con audience y política acotada verificadas; proveedor
+y Consumer implementados y probados unitariamente, según la
 [decisión 007](../decisions/007-layer3-attestation.md). Contrato en la
 [spec](../specs/003-layer3.md).
 
@@ -38,5 +38,5 @@ Checkpoint 13-09-2026: fases 1–3 completadas. Trustee v0.21.0 está fijado al
 commit compatible con CoCo 0.22.0 y el recurso sintético pasó allow/deny desde
 Pods Kata, incluida la decisión HTTP 200/401 observada en KBS y la restauración
 de allow. La prueba no incluyó reinicio del host ni una TEE real. Siguiente fase:
-cerrar D3 y los controles D4 exigidos antes de usar la AES real; solo después
-puede comenzar el proveedor CDH.
+ejecutar el proveedor Python sintético en Kata, seguido de AES original y E2E.
+D3/D4 se cerraron: admin 200/401, política Sample acotada 200/401, suite 123 tests.

@@ -7,6 +7,7 @@ RESOURCE_PATH="default/test/l3-synthetic"
 TRUSTEE_COMMIT="258ea4acb7b9bd865fce5c63a539f2120dba8298"
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_DIR=$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)
+ALLOW_POLICY="$REPO_DIR/k8s/layer3/sample-resource-policy.rego"
 KBS_CLIENT=${KBS_CLIENT:-}
 TRUSTEE_CHECKOUT=${TRUSTEE_CHECKOUT:-}
 
@@ -28,19 +29,27 @@ port_forward_pid=""
 restore_allow="false"
 
 cleanup() {
+  result=$?
+  trap - EXIT
   if [ "$restore_allow" = "true" ]; then
-    "$KBS_CLIENT" --url http://127.0.0.1:18080 config \
+    if ! "$KBS_CLIENT" --url http://127.0.0.1:18080 config \
       --admin-token-file "$work_dir/admin-token" set-resource-policy \
-      --policy-file "$TRUSTEE_CHECKOUT/kbs/sample_policies/allow_all.rego" \
-      >/dev/null 2>&1 || true
+      --policy-file "$ALLOW_POLICY" \
+      >/dev/null 2>&1; then
+      echo "error: policy restoration failed; restore sample-resource-policy.rego before continuing" >&2
+      result=1
+    fi
   fi
   if [ -n "$port_forward_pid" ]; then
     kill "$port_forward_pid" 2>/dev/null || true
     wait "$port_forward_pid" 2>/dev/null || true
   fi
   rm -rf "$work_dir"
+  exit "$result"
 }
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 wait_for_terminal_phase() {
   pod_name=$1
@@ -82,6 +91,7 @@ kubectl port-forward -n "$TRUSTEE_NAMESPACE" svc/trustee-kbs 18080:8080 \
   >"$work_dir/port-forward.log" 2>&1 &
 port_forward_pid=$!
 sleep 2
+kill -0 "$port_forward_pid"
 
 admin_secret=$(kubectl -n "$TRUSTEE_NAMESPACE" get secret -o name | \
   sed -n '/bootstrap-user-keys$/p' | head -n 1)
@@ -93,7 +103,7 @@ printf '%s' 'cmdp-l3-synthetic-ok-v1' >"$work_dir/resource"
 
 "$KBS_CLIENT" --url http://127.0.0.1:18080 config \
   --admin-token-file "$work_dir/admin-token" set-resource-policy \
-  --policy-file "$TRUSTEE_CHECKOUT/kbs/sample_policies/allow_all.rego" >/dev/null
+  --policy-file "$ALLOW_POLICY" >/dev/null
 restore_allow="true"
 "$KBS_CLIENT" --url http://127.0.0.1:18080 config \
   --admin-token-file "$work_dir/admin-token" set-resource \
@@ -126,8 +136,8 @@ echo "trustee_deny_kbs_http=401"
 
 "$KBS_CLIENT" --url http://127.0.0.1:18080 config \
   --admin-token-file "$work_dir/admin-token" set-resource-policy \
-  --policy-file "$TRUSTEE_CHECKOUT/kbs/sample_policies/allow_all.rego" >/dev/null
+  --policy-file "$ALLOW_POLICY" >/dev/null
 restore_allow="false"
-echo "trustee_policy_restored=allow_all"
+echo "trustee_policy_restored=sample_resource_allowlist"
 
 echo "trustee_synthetic_allow_deny_ok=true"

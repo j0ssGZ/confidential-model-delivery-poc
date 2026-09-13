@@ -1,6 +1,7 @@
 # Layer 3: runtime CoCo y Trustee sintético
 
-Estado: L3-05 verificada; todavía no hay Consumer attested ni AES real en KBS.
+Estado: L3-05 y D3/D4 verificadas; Consumer attested con pruebas unitarias,
+pendiente E2E y todavía sin AES real en KBS.
 Ejecutar en el servidor Ubuntu con su kubeconfig, desde un checkout de `layer3`.
 No usar los contextos kind de Layer 1/2 para este ensayo.
 
@@ -63,6 +64,19 @@ aprobada sigue siendo el tag v0.21.0 y commit comprobado. Confirmar que los tres
 tags efectivos terminan en
 `258ea4acb7b9bd865fce5c63a539f2120dba8298-x86_64`.
 
+Tras instalar con Helm, aplicar la corrección pública de audience. Este script
+guarda configuración, logs y repositorio KBS en backup privado antes de reiniciar
+solo KBS y restaurar sus datos; no regenera las identidades existentes:
+
+```sh
+python3 scripts/layer3_configure_audience.py --backup-parent /tmp/cmdp-l3-private-backups
+python3 scripts/layer3_trustee_admin.py \
+  --client /tmp/kbs-client-v0.21.0/kbs-client --check-audience --fixture
+```
+
+Esperado: admin válido 200, token con audiencia distinta 401 y fixture pública
+`default/test/wrong-aes` registrada (32 ceros, no una clave de la demo).
+
 ## Obtener el cliente y repetir allow/deny
 
 Instalar ORAS 1.3.0 verificando el checksum publicado. El artefacto `sample_only`
@@ -87,7 +101,7 @@ El script copia el token administrativo a un directorio `mktemp` con umask 077,
 sin imprimirlo; registra únicamente `cmdp-l3-synthetic-ok-v1` en
 `default/test/l3-synthetic`. Crea dos Pods Kata desde los manifiestos, comprueba
 marcadores y exige que KBS registre respectivamente HTTP 200 y 401. Finalmente
-restaura `allow_all.rego`, cierra el port-forward y retira token y recurso local
+restaura `sample-resource-policy.rego`, cierra el port-forward y retira token y recurso local
 temporales. Los Pods y sus logs permanecen como evidencia. Salida final:
 
 ```text
@@ -95,7 +109,7 @@ trustee_allow_ok=true
 trustee_allow_kbs_http=200
 trustee_deny_ok=true
 trustee_deny_kbs_http=401
-trustee_policy_restored=allow_all
+trustee_policy_restored=sample_resource_allowlist
 trustee_synthetic_allow_deny_ok=true
 ```
 
@@ -114,7 +128,9 @@ La dirección KBS y el endpoint CDH siguen la
 y el [flujo get-resource](https://confidentialcontainers.org/docs/features/get-resource/)
 oficiales. `coco-dev` usa evidencia `Sample`: valida integración, attestation de
 muestra y enforcement de política, no una TEE real ni protección frente al host.
-HTTP interno, identidades demo, LocalFs efímero y `allow_all` impiden usar la AES
-real. Ver [spec](../../docs/specs/003-layer3.md),
+La política final exige Sample y limita rutas, sin certificar identidad exclusiva
+del workload. HTTP interno, identidades demo y LocalFs efímero se aceptan para
+el laboratorio de host/clúster confiables; el reinicio de KBS puede exigir
+reaprovisionamiento. Ver D4 y [spec](../../docs/specs/003-layer3.md),
 [runtime 008](../../docs/reports/008-layer3-runtime-smoke.md) y
 [Trustee 009](../../docs/reports/009-layer3-trustee-synthetic.md).

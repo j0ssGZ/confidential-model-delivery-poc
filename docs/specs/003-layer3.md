@@ -2,8 +2,8 @@
 
 Estado: infraestructura CoCo comprobada hasta L3-05: runtime y Trustee fijados,
 con recurso sintético autorizado y denegado desde Pods
-`kata-qemu-coco-dev`. El código del Consumer no puede entrar en implementación
-hasta resolver D3 y cerrar D4 para la AES real en la
+`kata-qemu-coco-dev`. D3/D4 cerradas y Consumer separado probado unitariamente;
+la AES real espera ejecutar el proveedor Python sintético en Kata, según la
 [decisión 007](../decisions/007-layer3-attestation.md).
 
 ## Objetivo
@@ -67,6 +67,14 @@ seguridad del modelo y no añade por sí sola protección antirrollback.
    seguro de memoria ni de los almacenes de Trustee.
 
 ## Requisitos funcionales
+
+Contrato de implementación: CLI `cmdp-consumer-attested` separada, proveedor
+CDH local sin proxy/redirect, timeout y lectura acotados, clave exactamente de
+32 bytes en memoria. Orden observable: firma → petición CDH → clave válida →
+GCM/hash/identidad → extracción → carga. Se mantienen los comportamientos L1/L2.
+El despliegue de laboratorio conserva almacenamiento KBS efímero y transporte
+interno HTTP; la política limita Sample y rutas, no prueba identidad exclusiva
+del workload. Ver las decisiones D3/D4 para la justificación y sus límites.
 
 - **L3-F1:** añadir una CLI explícita de Layer 3, sin fallback a `--key-file` ni
   al Secret directo de Layer 1/2.
