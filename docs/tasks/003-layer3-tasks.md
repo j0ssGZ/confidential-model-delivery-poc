@@ -1,6 +1,6 @@
 # Tareas 003: Layer 3
 
-Estado: aclaración. [Spec](../specs/003-layer3.md),
+Estado: L3-04 completada; Trustee y Consumer pendientes. [Spec](../specs/003-layer3.md),
 [decisión](../decisions/007-layer3-attestation.md) y
 [plan](../plans/003-layer3-plan.md).
 
@@ -12,9 +12,9 @@ Estado: aclaración. [Spec](../specs/003-layer3.md),
   Trustee, contrato del Consumer y política.
 - [x] L3-03: verificar Ubuntu x86_64, KVM, containerd, Kubernetes y Helm; clúster
   kubeadm de un nodo y CNI fijada llegaron a `Ready`.
-- [ ] L3-04: CoCo chart 0.22.0 desplegado y RuntimeClass creada; falta esperar el
-  DaemonSet y arrancar un Pod mínimo con
-  `kata-qemu-coco-dev`.
+- [x] L3-04: CoCo chart 0.22.0/Kata 4.0.0 listo; dos Pods mínimos
+  `kata-qemu-coco-dev` terminaron con salida 0. El segundo usa digest fijo;
+  kernel guest 6.18.35, UID 10001 y `kata_smoke_ok=true`.
 - [ ] L3-05: desplegar Trustee fijado y demostrar recurso sintético autorizado y
   denegado desde una VM Kata.
 - [ ] L3-06: implementar y probar cliente/proveedor CDH sin secretos en logs.
@@ -25,7 +25,8 @@ Estado: aclaración. [Spec](../specs/003-layer3.md),
 - [ ] L3-10: auditar, documentar, sincronizar Notion y cerrar la capa con evidencia
   y tag, sin modificar los hitos anteriores.
 
-D2–D4 bloquean el código. L3-04 bloquea Trustee; L3-05 bloquea afirmar que el
+D2–D4 bloquean el código. L3-04 ya permite preparar Trustee; L3-05 bloquea afirmar que el
 Consumer integrado es reproducible. No marcar checks por tests simulados si el
 criterio exige infraestructura real. Evidencia del bootstrap en el
-[informe 007](../reports/007-layer3-bootstrap.md).
+[informe 007](../reports/007-layer3-bootstrap.md), y runtime comprobado en el
+[informe 008](../reports/008-layer3-runtime-smoke.md). Reinicio del host pendiente.

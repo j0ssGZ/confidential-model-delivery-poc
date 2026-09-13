@@ -1,7 +1,8 @@
 # Layer 3: liberación de clave condicionada a attestation
 
-Estado: borrador en aclaración. El bootstrap del host y Kubernetes está
-comprobado; el código del Consumer no puede entrar en implementación hasta
+Estado: infraestructura CoCo comprobada hasta L3-04: host, Kubernetes,
+DaemonSet y Pod mínimo `kata-qemu-coco-dev`. El código del Consumer no puede
+entrar en implementación hasta
 resolver D2–D4 en la
 [decisión 007](../decisions/007-layer3-attestation.md).
 
@@ -116,6 +117,11 @@ seguridad del modelo y no añade por sí sola protección antirrollback.
    historial, imágenes Layer 3 o logs observados; se documentan sus límites.
 10. README, spec, decisión, plan, tareas, informes y Notion están sincronizados.
 
+Resultado parcial del 13-09-2026: criterios 1–2 satisfechos, con Pod terminado
+en salida 0 y kernel guest distinto del host. El criterio 3 (Trustee) y los
+recorridos de clave/Consumer siguen pendientes. La persistencia tras reinicio
+del host todavía no se ha verificado. [Evidencia 008](../reports/008-layer3-runtime-smoke.md).
+
 ## Fuera de alcance
 
 - Afirmar protección de una TEE real con `kata-qemu-coco-dev`.
@@ -133,3 +139,4 @@ seguridad del modelo y no añade por sí sola protección antirrollback.
 - [Tutorial sin hardware confidencial](https://confidentialcontainers.org/blog/2024/12/03/confidential-containers-without-confidential-hardware/).
 - [Plan](../plans/003-layer3-plan.md) y [tareas](../tasks/003-layer3-tasks.md).
 - [Bootstrap del laboratorio](../reports/007-layer3-bootstrap.md).
+- [Runbook y smoke CoCo](../../k8s/layer3/README.md).

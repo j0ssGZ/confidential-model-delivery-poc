@@ -43,10 +43,14 @@ Estado observado antes de salir:
 - `kata-as-coco-runtime`: `ContainerCreating`, descargando la imagen fijada
   `quay.io/kata-containers/kata-deploy:4.0.0`.
 
-## Pendiente tras el reinicio
+## Pendiente al cerrar este bootstrap (histórico)
 
 No se afirma que CoCo esté operativo. Hay que comprobar persistencia del nodo,
 esperar el DaemonSet, inspeccionar errores y ejecutar un Pod mínimo con
 `kata-qemu-coco-dev`. Solo entonces se completa L3-04 y se comienza Trustee.
 No se desplegó Trustee, no se registró la AES y no se modificó ni republicó el
 bundle de Hugging Face.
+
+Seguimiento posterior: el instalador terminó y el smoke pasó el 13-09-2026;
+ver [informe 008](008-layer3-runtime-smoke.md). El host aún mantenía su arranque
+anterior, por lo que sigue pendiente comprobar un reinicio real.

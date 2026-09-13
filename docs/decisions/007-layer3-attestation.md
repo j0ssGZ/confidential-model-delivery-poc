@@ -30,8 +30,8 @@ Mac aumenta el riesgo de bloqueo y no es el camino recomendado para la entrega.
 
 **Resultado:** opción recomendada confirmada. `secure-ai-node` ejecuta Ubuntu
 22.04.5 LTS x86_64 en el PC Intel i5-4670K, con VT-x, módulos `kvm_intel`/`kvm`,
-`/dev/kvm`, 4 CPU, 7,7 GiB de RAM y 86 GiB libres. El usuario se añadió al grupo
-`kvm`; el nuevo grupo se aplicará tras volver a iniciar sesión.
+`/dev/kvm`, 4 CPU, 7,7 GiB de RAM y 86 GiB libres en el bootstrap. El nuevo login
+confirmó pertenencia a `kvm` y acceso de lectura/escritura al dispositivo.
 
 ## D2 — Combinación de versiones
 
@@ -43,9 +43,10 @@ de CoCo; no se mezclan fragmentos del tutorial 0.10.0 con APIs actuales.
 
 **Resultado parcial:** Kubernetes/kubeadm/kubelet/kubectl 1.36.4 fijados,
 containerd 2.2.1 activo con `SystemdCgroup=true`, Helm 3.18.6 verificado por
-checksum, Flannel 0.28.8 y CoCo chart 0.22.0 con digest registrado. El nodo llegó
-a `Ready` y se creó `kata-qemu-coco-dev`. Falta que termine el DaemonSet
-`kata-as-coco-runtime`, arrancar un Pod mínimo y elegir/probar Trustee.
+checksum, Flannel 0.28.8 y CoCo chart 0.22.0 con digest registrado. El DaemonSet
+Kata 4.0.0 terminó y el Pod mínimo con `kata-qemu-coco-dev` pasó (salida 0,
+kernel guest 6.18.35). Falta elegir/probar Trustee. Dos ensayos, el segundo
+fijado por digest de BusyBox, están en el [informe 008](../reports/008-layer3-runtime-smoke.md).
 
 ## D3 — Contrato del Consumer
 

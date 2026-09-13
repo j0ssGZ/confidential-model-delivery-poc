@@ -5,22 +5,24 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 
 ## Estado
 
-Layer 3 está en fase de Specification/Clarification en la rama `layer3`:
+Layer 3 tiene el runtime CoCo comprobado en la rama `layer3`:
 [spec](docs/specs/003-layer3.md), [decisión pendiente](docs/decisions/007-layer3-attestation.md),
 [plan](docs/plans/003-layer3-plan.md) y [tareas](docs/tasks/003-layer3-tasks.md).
 Parte de `layer2-complete`, conservará la firma y sustituirá la entrega directa
-de la AES al workload por CDH + Trustee KBS. Todavía no está implementada: la
-instalación y el código están bloqueados hasta confirmar Ubuntu/KVM y fijar una
-matriz compatible de CoCo y Trustee. `kata-qemu-coco-dev` solo demostrará el
-protocolo de attestation, no confidencialidad respaldada por una TEE real.
+de la AES al workload por CDH + Trustee KBS. La entrega de clave todavía no está
+implementada: falta elegir/probar Trustee y cerrar el contrato del Consumer y
+la política. `kata-qemu-coco-dev` permite ensayar ese protocolo sin proporcionar
+confidencialidad respaldada por una TEE real.
 
 Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y
-Flannel 0.28.8. El nodo de un solo miembro llegó a `Ready`; CoCo chart 0.22.0
-quedó desplegado y creó `kata-qemu-coco-dev`, pero su DaemonSet aún descargaba
-`kata-deploy:4.0.0`. Tras el reinicio hay que comprobar que el instalador termina
-y arrancar un Pod mínimo antes de considerar CoCo operativo. Evidencia:
-[`informe 007`](docs/reports/007-layer3-bootstrap.md).
+Flannel 0.28.8. CoCo chart 0.22.0 terminó de instalar Kata 4.0.0; nodo `Ready`
+y DaemonSet `1/1 Running`. Un Pod mínimo con `kata-qemu-coco-dev`, UID 10001 y
+BusyBox fijado por digest terminó con salida 0 y `kata_smoke_ok=true`. Kernel
+guest 6.18.35 frente a host 5.15.0-191-generic. L3-04 está comprobada; falta
+validar un reinicio del host. [Runbook](k8s/layer3/README.md),
+[bootstrap 007](docs/reports/007-layer3-bootstrap.md) y
+[evidencia del runtime 008](docs/reports/008-layer3-runtime-smoke.md).
 
 Layer 2 completada y verificada en la rama `layer2` y fijada por el tag anotado
 `layer2-complete` en `e9234b9`: [spec](docs/specs/002-layer2.md),

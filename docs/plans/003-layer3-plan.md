@@ -1,6 +1,6 @@
 # Plan 003: Layer 3
 
-Estado: bootstrap del host y Kubernetes completado; instalación CoCo en curso.
+Estado: host, Kubernetes y runtime CoCo con Pod mínimo comprobados (L3-04).
 El código del Consumer continúa bloqueado por D2–D4 de la
 [decisión 007](../decisions/007-layer3-attestation.md). Contrato en la
 [spec](../specs/003-layer3.md).
@@ -9,6 +9,10 @@ El código del Consumer continúa bloqueado por D2–D4 de la
    sensibles, aprobar host y fijar Kubernetes/containerd/Helm/CoCo/Trustee.
 2. **Validar infraestructura mínima.** Instalar CoCo por Helm, comprobar la
    RuntimeClass y arrancar un Pod inocuo con `kata-qemu-coco-dev`.
+   Ensayo L3-04: `k8s/layer3/runtime-smoke.yaml`, BusyBox 1.37.0, UID 10001,
+   raíz de solo lectura y sin token Kubernetes. Debe terminar con salida 0 y
+   `kata_smoke_ok=true`; comparar el kernel guest con el host como evidencia
+   adicional. No solicita recursos a CDH ni valida attestation todavía.
 3. **Validar Trustee aislado.** Desplegar KBS/AS/RVPS por un método fijado,
    comprobar conectividad desde la VM Kata, cargar una política y un recurso
    sintético no secreto, y verificar permiso/denegación.
@@ -29,6 +33,6 @@ Cada fase debe terminar con validación proporcional y un commit atómico
 publicado en `layer3`. Los fallos de infraestructura no se ocultarán con mocks:
 las pruebas unitarias validan el código; el criterio end-to-end exige el PC CoCo.
 
-Checkpoint 13-09-2026: fase 1 completada para host/Kubernetes; fase 2 llega a
-release Helm creada y RuntimeClass presente. Tras el reinicio se comprueba el
-DaemonSet y se ejecuta el Pod mínimo antes de avanzar a Trustee.
+Checkpoint 13-09-2026: fase 1 completada para host/Kubernetes; fase 2 completada
+con DaemonSet listo y Pod mínimo exitoso. La prueba no incluyó reinicio del
+host. Siguiente fase: fijar Trustee y ensayar un recurso sintético desde CoCo.
