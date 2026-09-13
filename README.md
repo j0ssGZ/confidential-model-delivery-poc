@@ -27,8 +27,11 @@ separados comprobados; la suite final vuelve a pasar con 138 tests. La auditorí
 acotada de historial e imagen no encontró claves conocidas, modelos ni artefactos
 en las capas; sus marcadores genéricos fueron revisados. No se afirma
 protección frente a un host malicioso: `kata-qemu-coco-dev` usa evidencia Sample,
-no una TEE real. [Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md) y
-[E2E 012](docs/reports/012-layer3-e2e.md).
+no una TEE real. Notion principal, Layer 3 y presentación fueron releídos y
+sincronizados; el tag anotado se crea únicamente desde el árbol limpio de cierre.
+[Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md),
+[E2E 012](docs/reports/012-layer3-e2e.md) y
+[auditoría 013](docs/reports/013-layer3-closure-audit.md).
 
 Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y

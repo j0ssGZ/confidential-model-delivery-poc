@@ -4,8 +4,8 @@ Estado: infraestructura CoCo, Trustee, proveedor CDH y Consumer separado
 comprobados. Tras revalidar el host después de reboot, el Consumer obtuvo por
 CDH la AES ya asociada al bundle firmado y cargó MiniLM desde Hugging Face en
 `kata-qemu-coco-dev`. Los negativos firma/CDH/GCM también se ejecutaron en el
-entorno real. La suite, build y auditoría acotada también se repitieron; queda
-sincronizar el cierre documental/Notion antes de declarar el tag final. Ver la
+entorno real. La suite, build, auditoría acotada y sincronización documental/
+Notion se completaron; queda crear el tag final desde el árbol limpio. Ver la
 [decisión 007](../decisions/007-layer3-attestation.md), el
 [informe 012](../reports/012-layer3-e2e.md) y la
 [auditoría 013](../reports/013-layer3-closure-audit.md).
@@ -145,7 +145,9 @@ restaurado. La suite final tiene 138 tests verdes y la reconstrucción/auditorí
 de la imagen no encontró AES, privada, modelo ni artefacto conocidos. Un único
 marcador del historial fue la literal de cabecera PEM usada por el validador; los
 cinco marcadores de imagen son dependencias/código ya revisados, no credenciales.
-El criterio 10 (sincronización total y tag condicionado) sigue abierto.
+El criterio 10 está satisfecho: README, spec, decisión, plan, tareas, informes,
+Notion principal, página Layer 3 y presentación fueron revalidados. El tag queda
+condicionado a árbol limpio y `origin/layer3` sincronizado.
 [Evidencias 008](../reports/008-layer3-runtime-smoke.md),
 [009](../reports/009-layer3-trustee-synthetic.md),
 [011](../reports/011-layer3-cdh-image.md) y

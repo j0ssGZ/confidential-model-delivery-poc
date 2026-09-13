@@ -1,8 +1,9 @@
 # Evidencia 013: auditoría de cierre de Layer 3
 
 Fecha: 13-09-2026. Rama `layer3`, posterior a `c8c7e80`. Esta evidencia cubre
-la auditoría técnica de L3-10; la sincronización de Notion y el tag permanecen
-condicionados y no se dan por hechos en este informe.
+la auditoría técnica de L3-10. Notion principal, Layer 3 y presentación fueron
+actualizados y releídos; el tag permanece condicionado a la operación Git final
+desde árbol limpio y remoto alineado.
 
 ## Verificación repetida
 
@@ -70,3 +71,13 @@ KBS LocalFs por el canal administrativo del laboratorio; no entra en Git,
 Notion, YAML ni la imagen. La evidencia E2E está en el
 [informe 012](012-layer3-e2e.md). `kata-qemu-coco-dev` sigue siendo Sample: no
 se declara confidencialidad frente al host malicioso ni una TEE real.
+
+## Sincronización documental
+
+Se actualizaron y releyeron las páginas Notion principal, Layer 3 y
+Presentación/Flujo: reflejan 138 tests, el positivo E2E, las tres fronteras
+negativas, ausencia de Secret AES en el Job y el límite explícito de Sample/
+`kata-qemu-coco-dev`. Sus diagramas Mermaid permanecen presentes. No se escribió
+ningún secreto ni valor de clave en Notion. README, spec, decisión, plan, tareas,
+runbook e informes del repositorio están alineados; el tag se crea después de
+este commit/push, nunca como sustituto de evidencia.

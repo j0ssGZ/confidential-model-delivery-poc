@@ -3,8 +3,8 @@
 Estado: fases 1–8 ejecutadas en CoCo real de laboratorio. D3/D4 están cerradas,
 el Consumer obtuvo la AES por CDH y pasó positivo/negativos E2E según la
 [decisión 007](../decisions/007-layer3-attestation.md). Auditoría, suite y build
-se repitieron; falta sincronizar Notion y decidir el tag condicionado. Contrato
-en la [spec](../specs/003-layer3.md).
+se repitieron y Notion se releyó/sincronizó. Solo queda crear el tag condicionado
+desde árbol limpio y remoto alineado. Contrato en la [spec](../specs/003-layer3.md).
 
 1. **Cerrar entorno y versiones.** Inspeccionar el PC Ubuntu sin mostrar datos
    sensibles, aprobar host y fijar Kubernetes/containerd/Helm/CoCo/Trustee.
@@ -39,5 +39,5 @@ siguió operativo y KBS confirmó que su LocalFs/`emptyDir` no persiste recursos
 se restauró de forma controlada. El positivo final pasó después de cada negativo.
 Los límites de arranque de Kata/kubelet permanecen documentados y no cuentan
 como negativos de seguridad. La suite final (138 tests), la reconstrucción de
-imagen y el escaneo acotado pasaron; queda Notion y tag solo si no aparece una
-discrepancia. No se usó TEE real.
+imagen y el escaneo acotado pasaron; Notion fue actualizado y releído sin
+discrepancias. Resta el tag anotado desde Git limpio. No se usó TEE real.
