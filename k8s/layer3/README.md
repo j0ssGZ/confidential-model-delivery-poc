@@ -1,7 +1,7 @@
 # Layer 3: runtime CoCo y Trustee sintético
 
-Estado: L3-05 y D3/D4 verificadas; Consumer attested con pruebas unitarias,
-pendiente E2E y todavía sin AES real en KBS.
+Estado: L3-06 real e imagen/manifiestos L3-08 comprobados; Consumer attested con
+138 tests de suite, pendiente E2E y todavía sin AES real en KBS.
 Ejecutar en el servidor Ubuntu con su kubeconfig, desde un checkout de `layer3`.
 No usar los contextos kind de Layer 1/2 para este ensayo.
 
@@ -42,7 +42,8 @@ Pod y el DaemonSet disponible comprueban además la instalación funcional.
 Trustee v0.21.0 declara compatibilidad con CoCo 0.22.0. Se usa su checkout
 exacto y no `main`; el values file sustituye los tags `latest` predeterminados
 de KBS, AS y RVPS por el commit de la release. El chart genera identidades demo
-y usa LocalFs sobre `emptyDir`: es adecuado solo para este recurso sintético.
+y usa LocalFs sobre `emptyDir`: D4 lo acepta para este laboratorio de host
+confiable, no como almacenamiento durable o servicio de producción.
 
 ```sh
 git clone --branch v0.21.0 --depth 1 \
@@ -118,6 +119,89 @@ autoritativo de KBS muestra 401 para
 `GET /kbs/v0/resource/default/test/l3-synthetic`. No considerar válido un
 negativo si solo falló el contenedor, la red o el filesystem. Consultar ambos
 logs y el código de salida.
+
+## Imagen y Job del Consumer attested
+
+Imagen AMD64 construida desde `0581d0c`, disponible públicamente sin credenciales:
+`docker.io/jfanjul/confidential-model-delivery-consumer-attested@sha256:5ec1d732edfb5cb7a2efcbcdfadbba4f310759f1cd1d0ca309d64f36ce2238b6`.
+El runtime descarga la imagen dentro de la VM; importar solo al containerd del
+host no basta. Build y ayuda local comprobados:
+
+```sh
+docker build --platform linux/amd64 -f Dockerfile.consumer-attested \
+  -t cmdp-consumer-attested:0581d0c .
+docker run --rm --platform linux/amd64 --network none --read-only \
+  --tmpfs /work:rw,nosuid,nodev,size=256m,mode=1777 \
+  cmdp-consumer-attested:0581d0c --help
+```
+
+`/work` debe ser escribible incluso para la ayuda: las librerías ML utilizan
+temporales durante su importación. No se montan modelo ni AES en la imagen.
+La auditoría de todas las capas se ejecuta sobre `docker save` mediante
+`scripts/audit_layer3_image.py --known-secret <archivo-privado>`; imprime rutas
+y recuentos, no coincidencias. Los marcadores genéricos requieren revisión.
+
+Configurar únicamente las entradas públicas con la pública confiada existente:
+
+```sh
+kubectl apply -f k8s/layer3/public-config.yaml
+kubectl -n secure-ai-layer3 create configmap attested-signing-public \
+  --from-file=public.pem=keys/signing-public.pem --dry-run=client -o yaml \
+  | kubectl apply -f -
+```
+
+La definición JSON es una plantilla, no se aplica directamente. El renderer
+exige imagen por digest e IPv4 interna de KBS, y genera Jobs nuevos. El caso
+`synthetic` utiliza exclusivamente la fixture pública `default/test/wrong-aes`
+de 32 ceros, previamente registrada con `layer3_trustee_admin.py --fixture`.
+No aprovisionar la AES real hasta demostrar ese caso.
+
+```sh
+layer3_image=docker.io/jfanjul/confidential-model-delivery-consumer-attested@sha256:5ec1d732edfb5cb7a2efcbcdfadbba4f310759f1cd1d0ca309d64f36ce2238b6
+layer3_kbs_ip=$(kubectl -n coco-trustee get svc trustee-kbs -o jsonpath='{.spec.clusterIP}')
+python3 scripts/layer3_jobs.py --case synthetic \
+  --image "$layer3_image" --kbs-ip "$layer3_kbs_ip" | kubectl create -f -
+python3 scripts/layer3_verify_job.py --job <nombre-devuelto> --case synthetic \
+  --evidence-dir /tmp/cmdp-l3-evidence
+```
+
+El verificador conserva resultados, logs y Pod, y exige salida 0 **más** marcador
+del proveedor **más** KBS 200. Un error de arranque no es un negativo válido.
+No elimina los Jobs. Ejecutar un caso cada vez. El Job usa UID 10001, raíz de
+solo lectura, capabilities vacías, sin escalada ni token de ServiceAccount;
+`/work` es `emptyDir` Memory con límite explícito. Los únicos otros volúmenes
+son configuración pública. No hay AES Secret.
+
+### Timeouts de guest pull
+
+La imagen completa supera el límite de 60 s observado inicialmente. El renderer
+usa la anotación oficial Kata 4.0.0 `create_container_timeout=300`. El segundo
+ensayo detectó además la cancelación de kubelet a 120 s. En este host:
+
+```sh
+sudo python3 scripts/layer3_kubelet_timeout.py
+kubectl get nodes
+kubectl -n coco-trustee get pods
+```
+
+El script acepta solo el valor original observado `runtimeRequestTimeout: 0s`,
+guarda backup privado y lo cambia a `10m0s`, reiniciando solo kubelet. Si el
+archivo tiene otro valor, se detiene para diagnosticar. Es idempotente para el
+valor nuevo. No ejecutar reinstalaciones ni retirar los Jobs fallidos.
+
+Resultado comprobado: `attested-synthetic-4fmlj` arrancó con estos ajustes,
+imprimió `cdh_python_synthetic_ok=true`, KBS respondió 200 y el Pod terminó con
+salida 0. [Evidencia 011](../../docs/reports/011-layer3-cdh-image.md).
+
+### Después del reinicio anunciado
+
+No se ha reiniciado el host desde el agente ni verificado todavía el reboot.
+Kubelet y containerd están habilitados en systemd, pero eso no prueba que todos
+los recursos persistan. Volver a comprobar nodo, DaemonSet, RuntimeClass,
+Trustee, audience y política. LocalFs/emptyDir puede perder los recursos del
+KBS si se reemplaza su Pod. Reaprovisionar solo fixtures sintéticas primero,
+repetir CDH y no regenerar identidades existentes. La AES original permanece
+local y aún no está en Trustee. No crear `layer3-complete` en este checkpoint.
 
 ## Alcance
 

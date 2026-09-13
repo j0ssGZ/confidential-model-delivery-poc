@@ -3,7 +3,9 @@
 Estado: infraestructura CoCo comprobada hasta L3-05: runtime y Trustee fijados,
 con recurso sintético autorizado y denegado desde Pods
 `kata-qemu-coco-dev`. D3/D4 cerradas y Consumer separado probado unitariamente;
-la AES real espera ejecutar el proveedor Python sintético en Kata, según la
+L3-06 ya recuperó una fixture pública de 32 bytes con ese proveedor dentro de
+Kata (salida 0/KBS 200). La AES real espera revalidar el reboot anunciado por el
+operador y comenzar E2E, según la
 [decisión 007](../decisions/007-layer3-attestation.md).
 
 ## Objetivo
@@ -132,6 +134,15 @@ desde Pods `kata-qemu-coco-dev`; la política allow quedó restaurada. No se us�
 la AES real. Los criterios 4–10 y la persistencia tras reinicio siguen
 pendientes. [Evidencia 008](../reports/008-layer3-runtime-smoke.md) y
 [evidencia 009](../reports/009-layer3-trustee-synthetic.md).
+
+Actualización L3-06/L3-08: `attested-synthetic-4fmlj` ejecutó la imagen AMD64
+por digest, sin AES Secret ni token Kubernetes, y recuperó la fixture de 32
+ceros vía CDH real. Suite de 138 tests. Los dos primeros intentos fallaron antes
+de Python por límites de arranque de Kata y kubelet; se preservaron y no cuentan
+como negativos de seguridad. Ver [informe 011](../reports/011-layer3-cdh-image.md).
+Los criterios del modelo E2E y auditoría final siguen abiertos. Se pausa el
+aprovisionamiento AES ante el reinicio anunciado del host; no se declara
+persistencia ni cierre Layer 3.
 
 ## Fuera de alcance
 

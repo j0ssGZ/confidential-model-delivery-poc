@@ -6,7 +6,7 @@ Development; las reglas están en [`AGENTS.md`](AGENTS.md).
 ## Estado
 
 Layer 3 tiene runtime CoCo y Trustee sintético comprobados en la rama `layer3`:
-[spec](docs/specs/003-layer3.md), [decisión parcialmente cerrada](docs/decisions/007-layer3-attestation.md),
+[spec](docs/specs/003-layer3.md), [decisiones cerradas para PoC](docs/decisions/007-layer3-attestation.md),
 [plan](docs/plans/003-layer3-plan.md) y [tareas](docs/tasks/003-layer3-tasks.md).
 Parte de `layer2-complete`, conservará la firma y sustituirá la entrega directa
 de la AES al workload por CDH + Trustee KBS. La entrega de clave todavía no está
@@ -16,8 +16,12 @@ D3/D4 están cerradas con audience y política Sample acotada comprobadas.
 confidencialidad respaldada por una TEE real. Trustee v0.21.0 está fijado al
 commit declarado compatible con CoCo 0.22.0; un recurso sintético pasó allow
 (KBS 200), deny (KBS 401) y allow restaurada desde Pods Kata. La AES real no se
-registró todavía. El siguiente checkpoint ejecuta el proveedor Python con una
-fixture pública de 32 bytes dentro de Kata, antes de aprovisionar la AES original.
+registró todavía. **L3-06 comprobada:** el proveedor Python recuperó una fixture
+pública de 32 bytes dentro de Kata, con salida 0 y KBS 200. Imagen AMD64 por
+digest y manifiestos separados comprobados; 138 tests pasan. Se conserva el
+checkpoint antes del reinicio anunciado por el operador. Después: revalidar
+infraestructura, aprovisionar la AES original y ejecutar E2E positivo/negativos.
+[Evidencia CDH 011](docs/reports/011-layer3-cdh-image.md).
 
 Bootstrap del laboratorio del 13-09-2026: `secure-ai-node` ejecuta Ubuntu
 22.04.5 x86_64, Kubernetes 1.36.4 sobre containerd 2.2.1, Helm 3.18.6 y

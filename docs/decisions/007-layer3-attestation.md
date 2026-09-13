@@ -1,8 +1,9 @@
 # Decisión 007: entorno y contrato de attestation de Layer 3
 
 Estado: D1–D4 cerradas para la PoC el 13-09-2026. Audience y política acotada
-verificadas en Trustee real. El aprovisionamiento AES espera comprobar el nuevo
-proveedor Python dentro de Kata con la fixture pública de 32 bytes.
+verificadas en Trustee real. El proveedor Python ya recuperó la fixture pública
+de 32 bytes dentro de Kata. La AES original espera revalidar el reinicio del
+host anunciado por el operador; todavía no se ha transferido a Trustee.
 
 ## Hechos confirmados
 
@@ -139,6 +140,39 @@ un backup privado del operador antes de reiniciar únicamente el Deployment KBS.
 Fuentes: [políticas oficiales](https://confidentialcontainers.org/docs/attestation/policies/),
 [CDH](https://confidentialcontainers.org/docs/features/get-resource/) y código
 [bearer_jwt.rs fijado](https://github.com/confidential-containers/trustee/blob/258ea4acb7b9bd865fce5c63a539f2120dba8298/kbs/src/admin/authentication/bearer_jwt.rs).
+
+## Distribución de la imagen Layer 3
+
+El runtime comprobado utiliza `nydus-for-kata-tee` y descarga la imagen dentro
+del guest. Una importación solo al almacén containerd del host no satisface ese
+recorrido. Se publicará la imagen AMD64, auditada sin claves/modelos, en la cuenta
+Docker Hub ya disponible del operador: `jfanjul/confidential-model-delivery-consumer-attested`.
+Los Jobs usarán digest SHA-256, nunca `latest`; el código procede del checkpoint
+`0581d0c`. No se cambia el runtime, ni se añade un registro HTTP local.
+La clave pública Ed25519 se aprovisiona por el operador en un ConfigMap separado,
+como en Layer 2. Configuración HF/KBS pública y temporales son los únicos otros
+volúmenes. Se ejecutará un Job cada vez para respetar los 8 GB del laboratorio.
+
+El primer arranque de la imagen de 358 MB comprimidos agotó exactamente los
+60 segundos predeterminados de `CreateContainer`, antes de ejecutar Python.
+Kata 4.0.0 permite ajustar por Pod
+`io.katacontainers.config.runtime.create_container_timeout`; se usarán 300 s
+sin modificar el runtime global. El límite efectivo también depende de kubelet.
+Se conserva el intento fallido y se exige un nuevo resultado real, no se cuenta
+el timeout como negativo de seguridad. Fuente:
+[anotación en Kata 4.0.0](https://github.com/kata-containers/kata-containers/blob/4.0.0/src/runtime/virtcontainers/pkg/annotations/annotations.go)
+y su aplicación en `src/runtime/pkg/oci/utils.go` del mismo tag.
+
+El segundo ensayo confirmó el otro límite: kubelet canceló a los 120 s aunque
+Kata aceptaba 300 s. Se amplía `runtimeRequestTimeout` de kubelet a 10 minutos
+con backup de su archivo original, reiniciando solo kubelet (no containerd ni
+Trustee). Es un ajuste operativo acotado de arranque, no un cambio de versión,
+runtime ni frontera de seguridad. La anotación Kata mantiene el límite de 300 s.
+
+Resultado: el tercer Job arrancó después de unos 191 segundos de creación guest
+y recuperó la fixture mediante Python/CDH, KBS 200 y salida 0. Esto demuestra
+que las versiones son compatibles con nuestra imagen; los límites de tiempo
+eran insuficientes. No se cambió el tamaño de memoria, runtime ni snapshotter.
 
 ## Respuesta oral defendible
 

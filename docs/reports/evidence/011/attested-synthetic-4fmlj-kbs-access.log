@@ -1,0 +1,1 @@
+2026-09-13T13:18:26.457273Z  INFO actix_web::middleware::logger: 10.244.0.34 "GET /kbs/v0/resource/default/test/wrong-aes HTTP/1.1" 200 434 "-" "attestation-agent-kbs-client/0.1.0" 0.001292

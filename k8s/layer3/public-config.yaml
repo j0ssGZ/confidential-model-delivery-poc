@@ -1,0 +1,9 @@
+# Public inputs only. AES is retrieved through CDH, not a Kubernetes Secret.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: attested-public-config
+  namespace: secure-ai-layer3
+data:
+  BUNDLE_REPOSITORY: j0ssGZ/confidential-model-delivery-artifacts
+  BUNDLE_REVISION: 11eefa27b9f320b95263e1b00c09f2d2cbe36181

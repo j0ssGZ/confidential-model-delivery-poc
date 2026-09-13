@@ -1,0 +1,15 @@
+{
+  "job": "attested-synthetic-4fmlj",
+  "pod": "attested-synthetic-4fmlj-546qf",
+  "case": "synthetic",
+  "pod_ip": "10.244.0.34",
+  "created": "2026-09-13T13:13:05Z",
+  "exit_code": 0,
+  "stages": [],
+  "runtime": "kata-qemu-coco-dev",
+  "image": "docker.io/jfanjul/confidential-model-delivery-consumer-attested@sha256:5ec1d732edfb5cb7a2efcbcdfadbba4f310759f1cd1d0ca309d64f36ce2238b6",
+  "image_id": "docker.io/jfanjul/confidential-model-delivery-consumer-attested@sha256:5ec1d732edfb5cb7a2efcbcdfadbba4f310759f1cd1d0ca309d64f36ce2238b6",
+  "aes_secret_mounted": false,
+  "kbs_resource_requests": 1,
+  "passed": true
+}

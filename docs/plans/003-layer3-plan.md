@@ -40,3 +40,11 @@ Pods Kata, incluida la decisión HTTP 200/401 observada en KBS y la restauració
 de allow. La prueba no incluyó reinicio del host ni una TEE real. Siguiente fase:
 ejecutar el proveedor Python sintético en Kata, seguido de AES original y E2E.
 D3/D4 se cerraron: admin 200/401, política Sample acotada 200/401, suite 123 tests.
+
+Checkpoint posterior: proveedor Python comprobado en Kata con fixture de 32
+bytes, imagen por digest y manifiestos separados; suite 138 tests. Se ajustaron
+timeouts de creación guest con evidencia y backup, sin cambiar versiones.
+Antes de continuar se revalidará el reinicio que anunció el operador. No se
+aprovisionó la AES original ni se ejecutó aún el Consumer E2E con MiniLM.
+Siguiente: comprobar servicios/política/fixture tras reboot, recuperar el último
+checkpoint si es necesario, luego fases 7–8 con la AES original.
